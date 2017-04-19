@@ -1,0 +1,108 @@
+<!DOCTYPE assessmentTest [
+<!ELEMENT assessmentTest (assessmentItem)+>
+
+<!ELEMENT assessmentItem (responseDeclaration*, outcomeDeclaration?, itemBody?, responseProcessing?)>
+    <!ATTLIST assessmentItem
+    identifier (choice|choiceMultiple|positionObjects) #REQUIRED
+    title CDATA #REQUIRED
+    label CDATA #IMPLIED
+    language CDATA #IMPLIED
+    toolName CDATA #IMPLIED
+    toolVersion CDATA #IMPLIED
+    adaptive (true|false) "false"
+    timeDependent (true|false) "false"
+    id CDATA #REQUIRED
+    creationTimestamp CDATA #REQUIRED
+    categoryTags CDATA #REQUIRED
+    >
+
+<!ELEMENT responseDeclaration (correctResponse?, mapping?, areaMapping?)>
+    <!ATTLIST responseDeclaration
+    identifier CDATA #REQUIRED
+    cardinality (multiple|ordered|record|single) #REQUIRED
+    baseType (boolean|directedPair|duration|file|float|identifier|integer|pair|point|string|uri) #IMPLIED
+    >
+
+<!ELEMENT correctResponse (value+)>
+    <!ATTLIST correctResponse
+    interpretation CDATA #IMPLIED
+    >
+
+<!ELEMENT value (#PCDATA)>
+    <!ATTLIST value
+    cellIdentifier CDATA #IMPLIED
+    >
+
+<!ELEMENT mapping (mapEntry+)>
+    <!ATTLIST mapping
+    lowerBound CDATA #IMPLIED
+    upperBound CDATA #IMPLIED
+    defaultValue CDATA "0"
+    >
+
+<!ELEMENT mapEntry EMPTY>
+    <!ATTLIST mapEntry
+    mapKey CDATA #REQUIRED
+    mappedValue CDATA #REQUIRED
+    caseSensitive (true|false) "false"
+    >
+
+<!ELEMENT areaMapping (areaMapEntry+)>
+    <!ATTLIST areaMapping
+    lowerBound CDATA #IMPLIED
+    upperBound CDATA #IMPLIED
+    defaultValue CDATA "0"
+    >
+
+<!ELEMENT areaMapEntry EMPTY>
+    <!ATTLIST areaMapEntry
+    shape (circle|default|ellipse|poly|rect) "circle"
+    coords CDATA #REQUIRED
+    mappedValue CDATA #REQUIRED
+    >
+
+<!ELEMENT outcomeDeclaration EMPTY>
+
+<!ELEMENT itemBody (p+, choiceInteraction?, positionObjectStage?)>
+
+<!ELEMENT responseProcessing EMPTY>
+
+<!ELEMENT p (#PCDATA|img)*>
+<!ELEMENT img EMPTY>
+    <!ATTLIST img
+    src CDATA #REQUIRED
+    alt CDATA #IMPLIED
+    >
+
+<!ELEMENT choiceInteraction (prompt?, simpleChoice+)>
+    <!ATTLIST choiceInteraction
+    responseIdentifier CDATA #REQUIRED
+    shuffle (true|false) "false"
+    maxChoices CDATA #REQUIRED
+    >
+
+<!ELEMENT positionObjectStage (object, positionObjectInteraction)>
+
+<!ELEMENT object EMPTY>
+    <!ATTLIST object
+    type CDATA #REQUIRED
+    data CDATA #REQUIRED
+    width CDATA #REQUIRED
+    height CDATA #REQUIRED
+    >
+
+<!ELEMENT positionObjectInteraction (object)>
+    <!ATTLIST positionObjectInteraction
+    responseIdentifier CDATA "RESPONSE"
+    maxChoices CDATA #REQUIRED
+    >
+
+
+<!ELEMENT prompt (#PCDATA)>
+
+<!ELEMENT simpleChoice (#PCDATA|img)*>
+    <!ATTLIST simpleChoice
+    identifier CDATA #REQUIRED
+    >
+
+]>

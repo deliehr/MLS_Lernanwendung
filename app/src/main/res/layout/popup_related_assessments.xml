@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/popup_package_source_background"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="40dp"
+        android:text="@string/activity_selection_popup_label_title"
+        android:gravity="center_horizontal"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_selection_popup_label_question"
+        android:id="@+id/tvPopupPackage"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:layout_marginBottom="10dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_selection_popup_button_yes"
+            android:onClick="btnRelatedAssessmentsYes"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/activity_selection_popup_button_no"
+            android:id="@+id/btnDeletePackageSoure"
+            android:onClick="btnRelatedAssessmentsNo"/>
+
+        <!--
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Löschen"
+            android:id="@+id/button4"
+            android:onClick="btnClickDeletePoi"
+            android:textColor="#950D0D"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Abbrechen"
+            android:id="@+id/btnCancelDeletePoi"
+            android:onClick="btnClickCancelDeletePoi"
+            android:textColor="#46a632"/>
+        -->
+    </LinearLayout>
+
+</LinearLayout>

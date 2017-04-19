@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/libs/xerces-for-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="95c5858707dcb34204f55128180417f5c7926768">
+        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/xerces-for-android_1bcd24694ca105f52d5f8351122cda0efac0a71b.jar" />
+    </item>
+
+</items>

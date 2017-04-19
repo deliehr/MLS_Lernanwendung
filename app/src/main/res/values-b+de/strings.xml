@@ -1,0 +1,10 @@
+<resources>
+    <!-- bar titles -->
+
+    <!-- main menu -->
+    <string name="main_menu_button_learn">Lernen</string>
+    <string name="main_menu_button_statistic">Statistik</string>
+    <string name="main_menu_button_config">Einstellungen</string>
+
+    <!-- activity config -->
+</resources>

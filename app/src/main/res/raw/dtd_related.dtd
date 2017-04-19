@@ -1,0 +1,14 @@
+<!DOCTYPE relatedAssessments [
+<!ELEMENT relatedAssessments (group+)>
+
+<!ELEMENT group (item+)>
+<!ATTLIST group
+    id CDATA #REQUIRED
+    creationTimestamp CDATA #REQUIRED
+    categoryTags CDATA #REQUIRED
+    title CDATA #REQUIRED
+    shuffle (true|false) "false"
+    >
+
+<!ELEMENT item (#PCDATA)>
+]>

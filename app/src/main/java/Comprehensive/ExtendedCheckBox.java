@@ -16,10 +16,6 @@ public class ExtendedCheckBox extends AppCompatCheckBox {
         super(context);
     }
 
-    public ExtendedCheckBox(Context context, String identifier) {
-        super(context);
-        this.setIdentifier(identifier);
-    }
     // endregion
 
     // region getters and setters

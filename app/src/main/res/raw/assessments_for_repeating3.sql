@@ -10,5 +10,5 @@ FROM
 WHERE
     t_assessment_item.id = t_statistic.fk_t_assessment_item_id AND
     (t_statistic.how_solved = 1 OR t_statistic.how_solved = 2) AND
-     id NOT IN [exclude];
+     t_assessment_item.id NOT IN [exclude];
 

@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.DragEvent;
 import android.view.View;
 
-import Components.DragAssessment;
-
 /**
  * Implements the OnDragListener for Drag'n'Drop purposes.
  * Saves a related (column or row) identifier as a cell in a drag'n'drop-table.

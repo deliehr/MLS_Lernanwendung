@@ -2,12 +2,9 @@ package Components;
 
 import android.content.Context;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import Comprehensive.Application;
+import Comprehensive.App;
 
 /**
  * Class for table support
@@ -25,8 +22,15 @@ public class TableSupport extends Support implements SupportInterface {
 
     @Override
     public void displaySupport(Context context, LinearLayout targetLinearLayout) {
+        // show prompt
+        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView prompt = new TextView(context);
+        prompt.setText(this.getPrompt());
+        prompt.setLayoutParams(tvParams);
+        targetLinearLayout.addView(prompt);
+
         // show single table
-        targetLinearLayout.addView(Application.getTableLayoutByTable((Object) this, this.getTable(), context));
+        targetLinearLayout.addView(App.getTableLayoutByTable((Object) this, this.getTable(), context));
     }
 
 

@@ -11,9 +11,9 @@
     toolVersion CDATA #IMPLIED
     adaptive (true|false) "false"
     timeDependent (true|false) "false"
-    id CDATA #REQUIRED
-    creationTimestamp CDATA #REQUIRED
-    categoryTags CDATA #REQUIRED
+    id CDATA #IMPLIED
+    creationTimestamp CDATA #IMPLIED
+    categoryTags CDATA #IMPLIED
     >
 
 <!ELEMENT responseDeclaration (correctResponse?, mapping?, areaMapping?)>

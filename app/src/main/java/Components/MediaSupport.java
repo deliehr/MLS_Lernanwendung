@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +14,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.Toast;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import java.io.File;
 
-import Comprehensive.Application;
-import Comprehensive.ExtendedButton;
+import Comprehensive.App;
 import Comprehensive.ExtendedOnClickListener;
+import Comprehensive.ExtendedVideoView;
 import it.liehr.mls_app.ActivityFullscreenVideo;
 import it.liehr.mls_app.R;
 
@@ -46,7 +43,7 @@ public class MediaSupport extends Support implements SupportInterface  {
     @Override
     public void displaySupport(Context context, LinearLayout targetLinearLayout) {
         // build source path
-        String sourcePath = ((Activity) context).getFilesDir() + Application.relativeWorkingDataDirectory + "media/support/" + this.getUuid() + "/" + this.getMediaSource();
+        String sourcePath = ((Activity) context).getFilesDir() + App.relativeWorkingDataDirectory + "media/support/" + this.getUuid() + "/" + this.getMediaSource();
         File mediaFile = new File(sourcePath);
 
         if(mediaFile.exists()) {
@@ -54,6 +51,13 @@ public class MediaSupport extends Support implements SupportInterface  {
             switch (this.getIdentifier()) {
                 case "image":
                     try {
+                        // show prompt
+                        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        TextView prompt = new TextView(context);
+                        prompt.setText(this.getPrompt());
+                        prompt.setLayoutParams(tvParams);
+                        targetLinearLayout.addView(prompt);
+
                         // show image
                         ImageView imageView = new ImageView(context);
 
@@ -73,9 +77,15 @@ public class MediaSupport extends Support implements SupportInterface  {
                 case "video":
                     // show video
                     try {
+                        // show prompt
+                        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        TextView prompt = new TextView(context);
+                        prompt.setText(this.getPrompt());
+                        prompt.setLayoutParams(tvParams);
+                        targetLinearLayout.addView(prompt);
+
                         GradientDrawable bg = new GradientDrawable();
                         bg.setStroke(1, Color.rgb(0, 0, 0));
-
                         VideoView videoView = new VideoView(context);
                         //videoView.setBackground(bg);
                         videoView.setId(View.generateViewId());

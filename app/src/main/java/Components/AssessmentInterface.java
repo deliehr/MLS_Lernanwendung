@@ -3,7 +3,6 @@ package Components;
 import android.content.Context;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import Comprehensive.UsersAssessmentResponse;
 
@@ -18,7 +17,6 @@ public interface AssessmentInterface {
     void displayAssessment(Context context, LinearLayout targetLayout);
     void handleUserResponse(View view);
     void handleUserResponse(UsersAssessmentResponse response, View clickedView);
-    void completeStatisticEntry(UsersAssessmentResponse response);
     // endregion
 
 }

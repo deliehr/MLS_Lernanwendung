@@ -5,8 +5,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.graphics.drawable.GradientDrawable;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,15 +19,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import Comprehensive.Application;
-import Comprehensive.DatabaseHelper;
+import Comprehensive.App;
 import Comprehensive.ExtendedOnTouchListener;
+import Comprehensive.ExtendedToggleButton;
 import Comprehensive.UsersAssessmentResponse;
 import it.liehr.mls_app.ActivityLearn;
 import it.liehr.mls_app.R;
@@ -36,14 +38,13 @@ import it.liehr.mls_app.R;
  * @author Dominik Liehr
  * @version 0.02
  */
-public class HotspotAssessment extends Assessment implements AssessmentInterface  {
+public class HotspotAssessment extends Assessment {
     //region object variables
     private PositionObjectInteraction positionObjectInteraction;
     private List<String> correctValueList = new ArrayList<String>();    // list with coordinates, which are correct
     private List<AreaMapEntry> areaMapEntryList = new ArrayList<AreaMapEntry>();
     private int areaMappingDefaultValue = 0;
     private int maxChoices = 1;    // max selectable choices
-    private long returnIdInsertStatistic = -1;
     private int touchCount = 0;
     private List<Point> touchedPoints = new ArrayList<Point>();
     private int relativeLayoutId = -1;
@@ -54,18 +55,18 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
     ExtendedOnTouchListener touchListener;
     // endregion
 
-    private void showPoint(float clickX, float clickY, View view) {
+    private void showPoint(float clickX, float clickY) {
         // target layout
         RelativeLayout targetRelativeLayout = (RelativeLayout) ((Activity) this.getContext()).findViewById(this.relativeLayoutId);
 
         // layout params
         RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        imageParams.leftMargin = Math.round(clickX) - (this.positionObjectInteraction.getInnerObject().getWidth() / 2);
+        imageParams.leftMargin = Math.round(clickX) - (this.positionObjectInteraction.getInnerObject().getWidth()) / 2;
         imageParams.topMargin = Math.round(clickY) - this.positionObjectInteraction.getInnerObject().getHeight() / 2;
 
         // click image
         ImageView imageView = new ImageView(this.getContext());
-        File imageFile = new File(((Activity) this.getContext()).getFilesDir() + Application.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + this.positionObjectInteraction.getInnerObject().getData());
+        File imageFile = new File(((Activity) this.getContext()).getFilesDir() + App.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + this.positionObjectInteraction.getInnerObject().getData());
         Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
         imageView.setImageBitmap(imageBitmap);
 
@@ -83,11 +84,7 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
     // region interface methods
     @Override
     public void displayAssessment(Context context, LinearLayout targetLayout) {
-        // start statistic
-        this.startStatisticEntry();
-
-        // remove views
-        targetLayout.removeAllViews();
+        this.displayAssessmentStart(context, targetLayout);
 
         // reset touch count
         this.touchCount = 0;
@@ -106,7 +103,7 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
                     touchedPoints.add(new Point(Math.round(event.getX()), Math.round(event.getY())));
 
                     // show point
-                    assessment.showPoint(event.getX(), event.getY(), view);
+                    assessment.showPoint(event.getX(), event.getY());
 
                     // decrease remaining
                     TextView tvRemaining = (TextView) ((Activity) this.getContext()).findViewById(assessment.tvRemainingId);
@@ -121,23 +118,6 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
                 return false;
             }
         };
-
-        // create assessment
-        TextView tvTitle = new TextView(context);
-        tvTitle.setText(this.getTitle());
-        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-        tvTitle.setId(View.generateViewId());
-        targetLayout.addView(tvTitle);
-
-        // paragraphs
-        this.displayItemBodyParagraphs(targetLayout);
-
-        // prompt
-        TextView tvPrompt = new TextView(context);
-        tvPrompt.setText(this.getPrompt());
-        tvPrompt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        tvPrompt.setId(View.generateViewId());
-        targetLayout.addView(tvPrompt);
 
         // user info, remaining clicks
         LinearLayout userInfoLayout = new LinearLayout(this.getContext());
@@ -177,7 +157,7 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
         RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         ImageView imageView = new ImageView(this.getContext());
-        File imageFile = new File(((Activity) this.getContext()).getFilesDir() + Application.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + this.positionObjectInteraction.getOuterObject().getData());
+        File imageFile = new File(((Activity) this.getContext()).getFilesDir() + App.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + this.positionObjectInteraction.getOuterObject().getData());
         Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
         imageView.setImageBitmap(imageBitmap);
         imageView.setLayoutParams(imageParams);
@@ -193,7 +173,59 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
         imageView.setOnTouchListener(this.touchListener);
 
         // show support
-        Application.addSupportToLayout(this.getContext(), this);
+        App.addSupportToLayout(this.getContext(), this);
+    }
+
+    private boolean pointFound(Components.HotspotAssessment.AreaMapEntry entry, Point touchedPoint) {
+        boolean found = false;
+
+        int x = Integer.parseInt(entry.getCoords().split(",")[0]);
+        int y = Integer.parseInt(entry.getCoords().split(",")[1]);
+        int dev = Integer.parseInt(entry.getCoords().split(",")[2]);
+
+        // x within p.x + deviation radius?
+        if(x >= touchedPoint.x - dev && x <= touchedPoint.x + dev) {
+            if(y >= touchedPoint.y - dev && y < touchedPoint.y + dev) {
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
+    public void displayPointSolution(AreaMapEntry entry) {
+        // target layout
+        RelativeLayout targetRelativeLayout = (RelativeLayout) ((Activity) this.getContext()).findViewById(this.relativeLayoutId);
+
+        // layout params
+        RelativeLayout.LayoutParams imageParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        imageParams.leftMargin = Math.round(entry.getXCoord()) - (this.positionObjectInteraction.getInnerObject().getWidth()) / 2;
+        imageParams.topMargin = Math.round(entry.getYCoord()) - this.positionObjectInteraction.getInnerObject().getHeight() / 2;
+
+        File hotspotPoint = new File(this.getContext().getFilesDir() + "/hotspot_solution_point.png");
+        boolean fileCreated = true;
+        if(!hotspotPoint.exists()) {
+            try {
+                App.createFile(hotspotPoint.getAbsolutePath(), this.getContext(), R.drawable.hotspot_point);
+            } catch (Exception e) {
+                fileCreated = false;
+            }
+        }
+
+        if(fileCreated) {
+            Bitmap imageBitmap = BitmapFactory.decodeFile(hotspotPoint.getAbsolutePath());
+
+            // click image
+            ImageView imageView = new ImageView(this.getContext());
+            //imageView.setImageResource(R.drawable.hotspot_point);
+            imageView.setImageBitmap(imageBitmap);
+            imageView.setLayoutParams(imageParams);
+
+            // add click image to layout
+            targetRelativeLayout.addView(imageView);
+        } else {
+            Log.e("Hotspot", "Hotspot solution point could not be created.");
+        }
     }
 
     @Override
@@ -211,78 +243,44 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
             int dev = Integer.parseInt(entry.getCoords().split(",")[2]);
 
             // distinguish shape
-            // // TODO: 06.04.2017 shape implementation hotspot assessment
+            // TODO: 06.04.2017 shape implementation hotspot assessment
 
             if(i == 0) {
                 // first round
                 // search for clicked points
                 for(Point p:this.touchedPoints) {
-                    // x within p.x + deviation radius?
-                    if(x >= p.x - dev && x <= p.x + dev) {
-                        if(y >= p.y - dev && y < p.y + dev) {
-                            // point found
-                            response = UsersAssessmentResponse.Correct;
-                            this.touchedPoints.remove(p);
-                            break;
-                        }
+                    if(this.pointFound(entry, p)) {
+                        // point found
+                        response = UsersAssessmentResponse.Correct;
+                        this.touchedPoints.remove(p);
+                        break;
+                    } else {
+                        // show correct solution
+                        this.displayPointSolution(entry);
                     }
                 }
             } else {
                 // following round
                 // search for clicked points
                 for(Point p:this.touchedPoints) {
-                    // x within p.x + deviation radius?
-                    if(x >= p.x - dev && x <= p.x + dev) {
-                        if(y >= p.y - dev && y < p.y + dev) {
-                            // point found
-                            if(response.equals(UsersAssessmentResponse.Wrong)) {
-                                response = UsersAssessmentResponse.Partly_Correct;
-                                this.touchedPoints.remove(p);
-                                break;
-                            }
-                        } else {
-                            // not found
-                            if(response.equals(UsersAssessmentResponse.Correct)) {
-                                response = UsersAssessmentResponse.Partly_Correct;
-                            }
+                    if(this.pointFound(entry, p)) {
+                        // point found
+                        if(response.equals(UsersAssessmentResponse.Wrong)) {
+                            response = UsersAssessmentResponse.Partly_Correct;
+                            this.touchedPoints.remove(p);
+                            break;
                         }
                     } else {
                         if(response.equals(UsersAssessmentResponse.Correct)) {
                             response = UsersAssessmentResponse.Partly_Correct;
                         }
+                        this.displayPointSolution(entry);
                     }
                 }
             }
         }
 
-        // assessments to process
-        if(!this.isAlreadySolved()) {
-            ActivityLearn.assessmentsToProcess--;
-        }
-
-        // statistic
-        this.completeStatisticEntry(response);
-
-        // user response
-        Application.showUserResponse(this.getContext(), (LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling), response);
-
-        // mark solved
-        this.setAlreadySolved(true);
-        this.setHowSolved(response);
-
-        // buttons
-        if(ActivityLearn.assessmentsToProcess == 0) {
-            // disable buttons
-            Application.disableLearnButtons(this.getContext());
-
-            // show summary button (only #assessments > 1)
-            if(((ActivityLearn) this.getContext()).assessments.size() > 1) {
-                Button b = new Button(this.getContext());
-                b.setText(this.getContext().getString(R.string.activity_learn_message_all_assessments_solved));
-                b.setOnClickListener(Application.getNewSummaryOnClickListener(this.getContext()));
-                ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling)).addView(b);
-            }
-        }
+        this.handleUserResponseEnd(response);
     }
 
     @Override
@@ -296,12 +294,6 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
     public HotspotAssessment()  {
         this.setIdentifier("positionObjects");
         this.setPositionObjectInteraction(new HotspotAssessment.PositionObjectInteraction());
-    }
-
-    public HotspotAssessment(PositionObjectInteraction poi, int amdv) {
-        this.setIdentifier("positionObjects");
-        this.setPositionObjectInteraction(poi);
-        this.setAreaMappingDefaultValue(amdv);
     }
     // endregion
 
@@ -391,11 +383,38 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
             this.mappedValue = mappedValue;
         }
 
+        public int getXCoord() {
+            try {
+                return Integer.valueOf(this.getCoords().split(",")[0]);
+            } catch (Exception e) {
+                Log.e("Hotspot", e.getMessage());
+            }
+
+            return 0;
+        }
+
+        public int getYCoord() {
+            try {
+                return Integer.valueOf(this.getCoords().split(",")[1]);
+            } catch (Exception e) {
+                Log.e("Hotspot", e.getMessage());
+            }
+
+            return 0;
+        }
+
+        public int getDeviation() {
+            try {
+                return Integer.valueOf(this.getCoords().split(",")[2]);
+            } catch (Exception e) {
+                Log.e("Hotspot", e.getMessage());
+            }
+
+            return 0;
+        }
+
         // endregion
 
-        // region object methods
-
-        // endregion
     }
 
     public static class Object {
@@ -451,10 +470,6 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
             this.height = height;
         }
         // endregion
-
-        // region object methods
-
-        // endregion
     }
 
     public static class PositionObjectInteraction {
@@ -493,9 +508,6 @@ public class HotspotAssessment extends Assessment implements AssessmentInterface
             this.innerObject = innerObject;
         }
 
-        // endregion
-
-        // region object methods
         // endregion
     }
 }

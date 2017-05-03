@@ -1,17 +1,14 @@
 package it.liehr.mls_app;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
@@ -32,8 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import Comprehensive.App;
 import Components.Assessment;
-import Comprehensive.Application;
 import Comprehensive.AssessmentsDataSource;
 import Comprehensive.ExtendedToggleButton;
 import Comprehensive.DatabaseHelper;
@@ -199,6 +196,9 @@ public class ActivitySelection extends AppCompatActivity {
             // not pressed, get data source
             currentButton.setAlreadyPressed(true);
 
+            // disable buttons
+            this.disableAllCategoryButtons(currentButton);
+
             // get all assessments
             DatabaseHelper helper = new DatabaseHelper(this);
             Cursor result = helper.getReadableDatabase().rawQuery(query, null);
@@ -291,78 +291,6 @@ public class ActivitySelection extends AppCompatActivity {
             Intent intent = new Intent(this, ActivityLearn.class);
             intent.putExtra("assessment_ids", this.serializeAssessmentIds());
             startActivity(intent);
-
-
-            /*
-            // search for related assessments
-            DatabaseHelper helper = new DatabaseHelper(this);
-
-            // search for each assessment
-            for(Assessment assessment:this.assessmentsToLearn) {
-                // get foreign keys
-                Cursor result = helper.getReadableDatabase().query(false, TableNames.RELATED_ITEM, new String[] {ForeignKeyNames.RELATED}, "assessment_uuid = ?", new String[] {String.valueOf(assessment.getUuid())}, null, null, null, null);
-                result.moveToFirst();
-
-                // is part of group?
-                if(result.getCount() > 0) {
-                    // first, ask user
-                    if(!this.popupUserAsked) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setMessage(R.string.activity_selection_popup_label_title);
-                        builder.setPositiveButton(R.string.activity_selection_popup_button_yes, new ExtendedDialogInterfaceOnClickListener(this, new Object[] {this, result, helper}) {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-                                try {
-                                    ActivitySelection currentActivity = (ActivitySelection) this.getObjects()[0];
-                                    currentActivity.popupUserAsked = true;
-                                    currentActivity.popupUserWantsRelatedAssessments = true;
-                                    currentActivity.userWantsRelatedAssessments((Cursor) this.getObjects()[1], (DatabaseHelper) this.getObjects()[2]);
-
-                                    // start learn activity
-                                    Intent intent = new Intent(currentActivity, ActivityLearn.class);
-                                    intent.putExtra("assessment_ids", currentActivity.serializeAssessmentIds());
-                                    startActivity(intent);
-                                } catch (Exception e) {
-                                    Log.e("Error", "ActivitySelection AlertDialog setPositiveButton onClick(): " + e.getMessage());
-                                }
-                            }
-                        });
-
-                        builder.setNegativeButton(R.string.activity_selection_popup_button_no, new ExtendedDialogInterfaceOnClickListener(this, new Object[] {this}) {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int which) {
-                                try {
-                                    ActivitySelection currentActivity = (ActivitySelection) this.getObjects()[0];
-                                    currentActivity.popupUserAsked = true;
-                                    currentActivity.popupUserWantsRelatedAssessments = false;
-
-                                    // start learn activity
-                                    Intent intent = new Intent(currentActivity, ActivityLearn.class);
-                                    intent.putExtra("assessment_ids", currentActivity.serializeAssessmentIds());
-                                    startActivity(intent);
-                                } catch (Exception e) {
-                                    Log.e("Error", "ActivitySelection AlertDialog setPositiveButton onClick(): " + e.getMessage());
-                                }
-                            }
-                        });
-
-                        builder.show();
-
-                        this.popupUserAsked = true;
-                    } else {
-                        // user want related assessments?
-                        if(this.popupUserWantsRelatedAssessments) {
-                            this.userWantsRelatedAssessments(result, helper);
-                        }
-                    }
-                }
-            }
-
-            // start learn activity
-            Intent intent = new Intent(this, ActivityLearn.class);
-            intent.putExtra("assessment_ids", this.serializeAssessmentIds());
-            startActivity(intent);
-            */
         } else {
             // no assessmments selected
             Toast.makeText(this, "Bitte Aufgaben auswählen", Toast.LENGTH_SHORT).show();
@@ -599,7 +527,7 @@ public class ActivitySelection extends AppCompatActivity {
 
                 // get max insert or update timestamp
                 DatabaseHelper helper = new DatabaseHelper(activity);
-                Cursor result = helper.getReadableDatabase().rawQuery(Application.getStringContentFromRawFile(activity, R.raw.assessments_last_imported), null);
+                Cursor result = helper.getReadableDatabase().rawQuery(App.getStringContentFromRawFile(activity, R.raw.assessments_last_imported), null);
                 result.moveToFirst();
 
                 // results existing?
@@ -608,7 +536,7 @@ public class ActivitySelection extends AppCompatActivity {
                     int max_timestamp = result.getInt(0);
 
                     // get assessments by new query
-                    String query = Application.getStringContentFromRawFile(activity, R.raw.assessments_last_imported2);
+                    String query = App.getStringContentFromRawFile(activity, R.raw.assessments_last_imported2);
                     query = query.replace("[max_timestamp]", String.valueOf(max_timestamp));
 
                     activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedToggleButton) view, query);
@@ -625,7 +553,7 @@ public class ActivitySelection extends AppCompatActivity {
 
                 // get assessments, which are solved partly_correct and wrong, and which are solved correctly
                 DatabaseHelper helper = new DatabaseHelper(activity);
-                Cursor result = helper.getReadableDatabase().rawQuery(Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating), null);
+                Cursor result = helper.getReadableDatabase().rawQuery(App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating), null);
                 result.moveToFirst();
 
                 if(result.getCount() > 0) {
@@ -635,12 +563,12 @@ public class ActivitySelection extends AppCompatActivity {
                         int assessmentId = result.getInt(0);
                         int countCorrectly = result.getInt(1);
 
-                        SharedPreferences preferences = activity.getSharedPreferences("repeatingThreshold", 3);
+                        SharedPreferences preferences = activity.getSharedPreferences("repeatingThreshold", MODE_PRIVATE);
                         int userThreshold = preferences.getInt("repeatingThreshold", 3);
 
                         if(countCorrectly >= userThreshold) {
                             // check if assessments (x = userThreshold) times after another was solved correctly
-                            String query2 = Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating2);
+                            String query2 = App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating2);
                             query2 = query2.replace("[id]", String.valueOf(assessmentId));
                             Cursor result2 = helper.getReadableDatabase().rawQuery(query2, null);
                             result2.moveToFirst();
@@ -679,16 +607,16 @@ public class ActivitySelection extends AppCompatActivity {
                     }
                     excludeSqlSequence.append(")");
 
-                    String query = Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating3);
+                    String query = App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating3);
                     query = query.replace("[exclude]", excludeSqlSequence.toString());
 
                     activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedToggleButton) view, query);
                 } else {
                     // not existing, show falsely solved assessments
-                    activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedToggleButton) view, Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_falsely));
+                    activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedToggleButton) view, App.getStringContentFromRawFile(activity, R.raw.assessments_solved_falsely));
                 }
 
-                //activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedDataSourceButton) view, Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating));
+                //activity.handleCategorySourceButtonClick("ForRepeating", (ExtendedDataSourceButton) view, App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating));
             }
         });
 
@@ -698,7 +626,7 @@ public class ActivitySelection extends AppCompatActivity {
                 super.onClick(view);
 
                 ActivitySelection activity = (ActivitySelection) this.getObjects()[0];
-                activity.handleCategorySourceButtonClick("CorrectlySolvedAssessments", (ExtendedToggleButton) view, Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_correctly));
+                activity.handleCategorySourceButtonClick("CorrectlySolvedAssessments", (ExtendedToggleButton) view, App.getStringContentFromRawFile(activity, R.raw.assessments_solved_correctly));
             }
         });
 
@@ -718,7 +646,7 @@ public class ActivitySelection extends AppCompatActivity {
                 super.onClick(view);
 
                 ActivitySelection activity = (ActivitySelection) this.getObjects()[0];
-                activity.handleCategorySourceButtonClick("FalselySolvedAssessments", (ExtendedToggleButton) view, Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_falsely));
+                activity.handleCategorySourceButtonClick("FalselySolvedAssessments", (ExtendedToggleButton) view, App.getStringContentFromRawFile(activity, R.raw.assessments_solved_falsely));
             }
         });
 
@@ -791,11 +719,48 @@ public class ActivitySelection extends AppCompatActivity {
         this.assessmentsSources = new ArrayList<AssessmentsDataSource>();
     }
 
+    private void disableAllCategoryButtons(ExtendedToggleButton exceptButton) {
+        // disable all category buttons
+        LinearLayout categoryLayout = (LinearLayout) this.findViewById(R.id.linearLayoutCategories);
+
+        try {
+            if(categoryLayout.getChildCount() > 0) {
+                for(int i=0;i < categoryLayout.getChildCount();i++) {
+                    View childView = categoryLayout.getChildAt(i);
+
+                    if(childView instanceof ExtendedToggleButton) {
+                        ExtendedToggleButton currentButton = (ExtendedToggleButton) childView;
+
+                        if(exceptButton != null) {
+                            if(currentButton != exceptButton) {
+                                if(currentButton.isAlreadyPressed() || currentButton.isChecked()) {
+                                    currentButton.performClick();
+                                    break;
+                                }
+                            }
+
+                        } else {
+                            if(currentButton.isAlreadyPressed() || currentButton.isChecked()) {
+                                currentButton.performClick();
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("Error", "ActivitySelection onResume(): " + e.getMessage());
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         ((LinearLayout) this.findViewById(R.id.linearLayoutRelatedButton)).removeAllViews();
+
+        this.disableAllCategoryButtons(null);
     }
 
     // region menu (dot points)

@@ -21,7 +21,6 @@ import Components.StandardCell;
 import Components.Table;
 import Components.TableAssessment;
 import it.liehr.mls_app.R;
-import Components.DragAssessment.DragMode;
 
 /**
  * Class for Database helper
@@ -49,9 +48,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // region override methods
     public void onCreate(SQLiteDatabase db) {
-        String sqlCreateAllTables = Application.getStringContentFromRawFile(this.context, R.raw.db_create_all_tables);
+        String sqlCreateAllTables = App.getStringContentFromRawFile(this.context, R.raw.db_create_all_tables);
 
-        String[] singleQueries = Comprehensive.Application.getMultipleQueries(sqlCreateAllTables);
+        String[] singleQueries = App.getMultipleQueries(sqlCreateAllTables);
 
         int c = 0;
         for(String query:singleQueries) {
@@ -69,7 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // drop all tables
         try {
-            String sqlDropAllTables = Application.getStringContentFromRawFile(this.context, R.raw.db_delete_all_tables);
+            String sqlDropAllTables = App.getStringContentFromRawFile(this.context, R.raw.db_delete_all_tables);
             db.execSQL(sqlDropAllTables);
         } catch (Exception e) {
             Log.e("Error", "DB. Error droping all tables: " + e.getMessage());
@@ -521,7 +520,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public SingleChoiceAssessment getSingleChoiceAssessment(long id) throws Exception {
         // region main assessment data
         // get query
-        String query = Application.getStringContentFromRawFile(context, R.raw.single_choice_assessment);
+        String query = App.getStringContentFromRawFile(context, R.raw.single_choice_assessment);
         query += " " + String.valueOf(id) + ";";
 
         // result
@@ -535,13 +534,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assessment.setCreationTimestamp(result.getInt(2));
         assessment.setIdentifier(result.getString(3));
         assessment.setTitle(result.getString(4));
-        assessment.setAdaptive(Application.parseSQLLiteBoolean(result.getInt(5)));
-        assessment.setTimeDependent(Application.parseSQLLiteBoolean(result.getInt(6)));
+        assessment.setAdaptive(App.parseSQLLiteBoolean(result.getInt(5)));
+        assessment.setTimeDependent(App.parseSQLLiteBoolean(result.getInt(6)));
         // response declaration identifier 7
         // response declaration cardinality 8
         // response declaration base type 9
         assessment.setResponseIdentifier(result.getString(10));
-        assessment.setShuffleChoices(Application.parseSQLLiteBoolean(result.getInt(11)));
+        assessment.setShuffleChoices(App.parseSQLLiteBoolean(result.getInt(11)));
         assessment.setMaxChoices(Byte.valueOf(String.valueOf(result.getInt(12))));
         assessment.setPrompt(result.getString(13));
         String itemBodyId = result.getString(14);
@@ -583,7 +582,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public MultipleChoiceAssessment getMultipleChoiceAssessment(long id) throws Exception {
         // region main assessment data
         // get query
-        String query = Application.getStringContentFromRawFile(context, R.raw.multiple_choice_assessment);
+        String query = App.getStringContentFromRawFile(context, R.raw.multiple_choice_assessment);
         query += " " + String.valueOf(id) + ";";
 
         // result
@@ -597,13 +596,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assessment.setCreationTimestamp(result.getInt(2));
         assessment.setIdentifier(result.getString(3));
         assessment.setTitle(result.getString(4));
-        assessment.setAdaptive(Application.parseSQLLiteBoolean(result.getInt(5)));
-        assessment.setTimeDependent(Application.parseSQLLiteBoolean(result.getInt(6)));
+        assessment.setAdaptive(App.parseSQLLiteBoolean(result.getInt(5)));
+        assessment.setTimeDependent(App.parseSQLLiteBoolean(result.getInt(6)));
         // response declaration identifier 7
         // response declaration cardinality 8
         // response declaration base type 9
         assessment.setResponseIdentifier(result.getString(10));
-        assessment.setShuffleChoices(Application.parseSQLLiteBoolean(result.getInt(11)));
+        assessment.setShuffleChoices(App.parseSQLLiteBoolean(result.getInt(11)));
         assessment.setMaxChoices(Byte.valueOf(String.valueOf(result.getInt(12))));
         assessment.setPrompt(result.getString(13));
         String itemBodyId = result.getString(14);
@@ -640,7 +639,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // endregion
 
         // region mapping
-        query = Application.getStringContentFromRawFile(context, R.raw.multiple_choice_ids);
+        query = App.getStringContentFromRawFile(context, R.raw.multiple_choice_ids);
         query += " " + String.valueOf(id) + ";";
         result = this.getReadableDatabase().rawQuery(query, null);
         result.moveToFirst();
@@ -669,7 +668,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public HotspotAssessment getHotspotAssessment(long id) throws Exception {
         // region main assessment data
         // get query
-        String query = Application.getStringContentFromRawFile(context, R.raw.hotspot_assessment);
+        String query = App.getStringContentFromRawFile(context, R.raw.hotspot_assessment);
         query += " " + String.valueOf(id) + ";";
 
         // result
@@ -683,8 +682,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assessment.setCreationTimestamp(result.getInt(2));
         assessment.setIdentifier(result.getString(3));
         assessment.setTitle(result.getString(4));
-        assessment.setAdaptive(Application.parseSQLLiteBoolean(result.getInt(5)));
-        assessment.setTimeDependent(Application.parseSQLLiteBoolean(result.getInt(6)));
+        assessment.setAdaptive(App.parseSQLLiteBoolean(result.getInt(5)));
+        assessment.setTimeDependent(App.parseSQLLiteBoolean(result.getInt(6)));
         // response declaration identifier 7
         // response declaration cardinality 8
         // response declaration base_type 9
@@ -756,7 +755,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public TableAssessment getTableAssessment(long id) throws Exception {
         // region main assessment data
         // get query
-        String query = Application.getStringContentFromRawFile(context, R.raw.table_interaction);
+        String query = App.getStringContentFromRawFile(context, R.raw.table_interaction);
         query = query.replace("[id]", String.valueOf(id));
 
         // result
@@ -770,8 +769,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assessment.setCreationTimestamp(result.getInt(2));
         assessment.setIdentifier(result.getString(3));
         assessment.setTitle(result.getString(4));
-        assessment.setAdaptive(Application.parseSQLLiteBoolean(result.getInt(5)));
-        assessment.setTimeDependent(Application.parseSQLLiteBoolean(result.getInt(6)));
+        assessment.setAdaptive(App.parseSQLLiteBoolean(result.getInt(5)));
+        assessment.setTimeDependent(App.parseSQLLiteBoolean(result.getInt(6)));
         // response declaration identifier 7
         // response declaration cardinality 8
         // response declaration base_type 9
@@ -827,9 +826,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     // cell data
                     cell.setIdentifier(resultCells.getString(0));
                     cell.setCellValue(resultCells.getString(1));
-                    cell.setHead(Application.parseSQLLiteBoolean(resultCells.getInt(2)));
+                    cell.setHead(App.parseSQLLiteBoolean(resultCells.getInt(2)));
                     cell.setColspan(resultCells.getInt(3));
-                    cell.setWriteable(Application.parseSQLLiteBoolean(resultCells.getInt(4)));
+                    cell.setWriteable(App.parseSQLLiteBoolean(resultCells.getInt(4)));
 
                     // add cell
                     row.addCell(cell);
@@ -859,7 +858,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DragAssessment getDragAssessment(long id) throws Exception {
         // region main assessment data
         // get query
-        String query = Application.getStringContentFromRawFile(context, R.raw.drag_interaction_ids);
+        String query = App.getStringContentFromRawFile(context, R.raw.drag_interaction_ids);
         query += " " + String.valueOf(id) + ";";
 
         // result
@@ -881,8 +880,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         assessment.setCreationTimestamp(result.getInt(2));
         assessment.setIdentifier(result.getString(3));
         assessment.setTitle(result.getString(4));
-        assessment.setAdaptive(Application.parseSQLLiteBoolean(result.getInt(5)));
-        assessment.setTimeDependent(Application.parseSQLLiteBoolean(result.getInt(6)));
+        assessment.setAdaptive(App.parseSQLLiteBoolean(result.getInt(5)));
+        assessment.setTimeDependent(App.parseSQLLiteBoolean(result.getInt(6)));
         String itemBodyId = result.getString(7);
         String dragInteractionId = result.getString(8);
         assessment.setPrompt(result.getString(9));
@@ -942,7 +941,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                     // cell data
                     cell.setId(Integer.valueOf(resultCells.getInt(0)));
-                    cell.setHead(Application.parseSQLLiteBoolean(resultCells.getInt(1)));
+                    cell.setHead(App.parseSQLLiteBoolean(resultCells.getInt(1)));
                     cell.setColspan(resultCells.getInt(2));
                     cell.setDragIdentifier(resultCells.getString(3));
                     cell.setCellValue(resultCells.getString(4));

@@ -9,7 +9,7 @@
     <string name="activity_config_button_add_source">Add package source</string>
     <string name="menu_keyword_exit_app">Exit application</string>
     <string name="menu_keyword_main_menu">Main menu</string>
-    <string name="activity_config_textview_title_learning">Assessment parameters</string>
+    <string name="activity_config_textview_title_learning">More settings</string>
     <string name="activity_config_tv_repeat_threshold">Threshold for repeating assessments</string>
     <string name="activity_config_button_set_repeating_threshold">Save threshold</string>
     <string name="activity_config_error_save_shared_preferences">Error saving preferences (shared preferences)</string>
@@ -47,14 +47,14 @@
     <string name="activity_learn_label_assessment_count">Assessment count</string>
     <string name="activity_learn_label_assessments_to_process">Remaining assessments</string>
     <string name="activity_selection_button_learn">Learn</string>
-    <string name="activity_selection_label_available_tags">Available tags</string>
+    <string name="activity_selection_label_available_tags">Available topics</string>
     <string name="activity_selection_label_selected_assessments">Selected assessments</string>
-    <string name="activity_selection_label_selected_tags">Selected tags</string>
+    <string name="activity_selection_label_selected_tags">Selected topics</string>
     <string name="menu_keyword_selection">Assessment selection</string>
     <string name="activity_learn_title_support">Support</string>
     <string name="activity_learn_button_check_user_response">Check solution</string>
     <string name="activity_learn_support_button_start_video">Start video</string>
-    <string name="activity_learn_support_button_video_fullscreen">Fullscreen video</string>
+    <string name="activity_learn_support_button_video_fullscreen">Video in fullscreen</string>
     <string name="activity_fullscreen_video_label">Fullscreen video</string>
     <string name="activity_learn_label_check_drag_assessment_solution">Please sort all elements to the correct columns/rows at first</string>
     <string name="activity_config_import_message_file_not_found">Error: File not found</string>
@@ -93,4 +93,18 @@
     <string name="keyword_table_assessment_type">Table</string>
     <string name="activity_statistic_button_hide_layout">Fold up</string>
     <string name="activity_statistic_button_show_layout">Fold out</string>
+    <string name="activity_config_button_add_source_by_qr">Package source by qr code</string>
+    <string name="activity_config_more_config_auto_switch">Switch to assessment selection after app start</string>
+    <string name="activity_config_message_replaces_blanks">Blanks in the description are replaced by a _</string>
+    <string name="activity_config_message_regex_mismatch">Wrong input format. Please don\'t use special characters in the description. The url must be a valid http-adress.</string>
+    <string name="activity_config_message_package_source_added_by_qr">Assessment source added</string>
+    <string name="activity_learn_mc_label_answer">Answer</string>
+    <string name="activity_learn_mc_required_points">Required number of points not reached</string>
+    <string name="keyword_assessment">Assessment</string>
+    <string name="assessment_type_description_choice">One selection possible. One is correct</string>
+    <string name="assessment_type_description_choiceMultiple">\"Multiple choices selectable. Maybe multiple choices are correct</string>
+    <string name="assessment_type_description_hotspot">Identification of objects</string>
+    <string name="assessment_type_description_table">Filling out tables</string>
+    <string name="assessment_type_description_drag">Sorting of terms</string>
+    <string name="activity_config_import_message_verify_extracted_files_error">Structure error</string>
 </resources>

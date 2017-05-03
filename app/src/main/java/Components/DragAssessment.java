@@ -10,10 +10,8 @@ import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -24,14 +22,10 @@ import com.google.android.flexbox.FlexboxLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import Comprehensive.Application;
-import Comprehensive.DatabaseHelper;
-import Comprehensive.ExtendedButton;
+import Comprehensive.App;
 import Comprehensive.ExtendedDragButton;
-import Comprehensive.ExtendedEditText;
 import Comprehensive.ExtendedLinearLayoutCell;
 import Comprehensive.ExtendedOnClickListener;
-import Comprehensive.ExtendedOnDragListener;
 import Comprehensive.ExtendedOnTouchListener;
 import Comprehensive.UsersAssessmentResponse;
 import it.liehr.mls_app.ActivityLearn;
@@ -43,14 +37,13 @@ import it.liehr.mls_app.R;
  * @author Dominik Liehr
  * @version 0.04
  */
-public class DragAssessment extends Assessment implements AssessmentInterface {
+public class DragAssessment extends Assessment {
     // region object variables
     private DragMode dragMode;
     private List<DragItem> dragItemList;
     private List<Table> tableList;
     private ExtendedDragButton draggedButton = null;
     private FlexboxLayout dragItemLayout = null;
-    private ExtendedDragButton currentDragButton = null;
     // endregion
 
     // region contructors
@@ -70,28 +63,7 @@ public class DragAssessment extends Assessment implements AssessmentInterface {
     // region interface
     @Override
     public void displayAssessment(Context context, LinearLayout targetLayout) {
-        // start statistic
-        this.startStatisticEntry();
-
-        // remove views
-        targetLayout.removeAllViews();
-
-        // create assessment
-        TextView tvTitle = new TextView(context);
-        tvTitle.setText(this.getTitle());
-        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-        tvTitle.setId(View.generateViewId());
-        targetLayout.addView(tvTitle);
-
-        // paragraphs
-        this.displayItemBodyParagraphs(targetLayout);
-
-        // prompt
-        TextView tvPrompt = new TextView(context);
-        tvPrompt.setText(this.getPrompt());
-        tvPrompt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        tvPrompt.setId(View.generateViewId());
-        targetLayout.addView(tvPrompt);
+        this.displayAssessmentStart(context, targetLayout);
 
         // background for flexbox
         GradientDrawable flexboxBackground = new GradientDrawable();
@@ -154,11 +126,11 @@ public class DragAssessment extends Assessment implements AssessmentInterface {
 
         // get tables
         for(Table table:this.getTableList()) {
-            targetLayout.addView(Application.getTableLayoutByTable(this, table, this.getContext()));
+            targetLayout.addView(App.getTableLayoutByTable(this, table, this.getContext()));
         }
 
         // show check button
-        this.checkButton = Application.getNewCheckButton(targetLayout, this, new ExtendedOnClickListener(this.getContext(), new Object[] {this}) {
+        this.checkButton = App.getNewCheckButton(targetLayout, this, new ExtendedOnClickListener(this.getContext(), new Object[] {this}) {
             @Override
             public void onClick(View view) {
                 super.onClick(view);
@@ -177,7 +149,7 @@ public class DragAssessment extends Assessment implements AssessmentInterface {
         });
 
         // show support
-        Application.addSupportToLayout(this.getContext(), this);
+        App.addSupportToLayout(this.getContext(), this);
     }
 
     @Override
@@ -217,6 +189,12 @@ public class DragAssessment extends Assessment implements AssessmentInterface {
                                             String userInputIdentifier = (String) currentExtendedDragButton.getObjects()[0];
 
                                             if(correctIdentifier.equals(userInputIdentifier)) {
+                                                currentCell.setBackgroundResource(R.drawable.summary_solved_correct);
+                                            } else {
+                                                currentCell.setBackgroundResource(R.drawable.summary_solved_falsely);
+                                            }
+
+                                            if(correctIdentifier.equals(userInputIdentifier)) {
                                                 if(!firstChecked) {
                                                     response = UsersAssessmentResponse.Correct;
                                                     firstChecked = true;
@@ -245,34 +223,7 @@ public class DragAssessment extends Assessment implements AssessmentInterface {
             }
         }
 
-        // assessments to process
-        if(!this.isAlreadySolved()) {
-            ActivityLearn.assessmentsToProcess--;
-        }
-
-        // statistic
-        this.completeStatisticEntry(response);
-
-        // user response
-        Application.showUserResponse(this.getContext(), (LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling), response);
-
-        // mark solved
-        this.setAlreadySolved(true);
-        this.setHowSolved(response);
-
-        // buttons
-        if(ActivityLearn.assessmentsToProcess == 0) {
-            // disable buttons
-            Application.disableLearnButtons(this.getContext());
-
-            // show summary button (only #assessments > 1)
-            if(((ActivityLearn) this.getContext()).assessments.size() > 1) {
-                Button b = new Button(this.getContext());
-                b.setText(this.getContext().getString(R.string.activity_learn_message_all_assessments_solved));
-                b.setOnClickListener(Application.getNewSummaryOnClickListener(this.getContext()));
-                ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling)).addView(b);
-            }
-        }
+        this.handleUserResponseEnd(response);
 
         // disable check button
         this.checkButton.setEnabled(false);

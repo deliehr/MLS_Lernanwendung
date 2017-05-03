@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatButton;
 
 import Components.Assessment;
-import Components.Support;
 
 public class ExtendedButton extends AppCompatButton {
     // region object variables

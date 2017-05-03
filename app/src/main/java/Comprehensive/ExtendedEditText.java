@@ -2,7 +2,6 @@ package Comprehensive;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatEditText;
-import android.util.AttributeSet;
 
 /**
  * Extension of the EditText gui widget.

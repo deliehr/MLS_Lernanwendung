@@ -4,24 +4,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.List;
 
 import Components.Assessment;
-import Components.Cell;
 import Components.DragAssessment;
-import Components.DragCell;
 import Components.HotspotAssessment;
 import Components.MediaSupport;
 import Components.MultipleChoiceAssessment;
 import Components.RelatedGroup;
-import Components.Row;
 import Components.SelectionSupport;
 import Components.SimpleChoice;
 import Components.SingleChoiceAssessment;
-import Components.StandardCell;
 import Components.Support;
 import Components.Table;
 import Components.TableAssessment;
@@ -638,7 +633,7 @@ public class Import_Obj2Db {
     private void updateSingleChoiceAssessment(SingleChoiceAssessment assessment, DatabaseHelper helper) throws Exception {
         // region preparation
         // get ids query
-        String idsQuery = Application.getStringContentFromRawFile(this.context, R.raw.single_choice_ids);
+        String idsQuery = App.getStringContentFromRawFile(this.context, R.raw.single_choice_ids);
 
         // append query with id
         idsQuery += String.valueOf(assessment.getId() + ";");
@@ -723,7 +718,7 @@ public class Import_Obj2Db {
     private void updateMultipleChoiceAssessment(MultipleChoiceAssessment assessment, DatabaseHelper helper) throws Exception {
         // region preparation
         // get ids query
-        String idsQuery = Application.getStringContentFromRawFile(this.context, R.raw.multiple_choice_ids);
+        String idsQuery = App.getStringContentFromRawFile(this.context, R.raw.multiple_choice_ids);
 
         // append query with id
         idsQuery += String.valueOf(assessment.getId() + ";");
@@ -827,7 +822,7 @@ public class Import_Obj2Db {
     private void updateHotspotAssessment(HotspotAssessment assessment, DatabaseHelper helper) throws Exception {
         // region preparation
         // get ids query
-        String idsQuery = Application.getStringContentFromRawFile(this.context, R.raw.hotspot_ids);
+        String idsQuery = App.getStringContentFromRawFile(this.context, R.raw.hotspot_ids);
 
         // append query with id
         idsQuery += String.valueOf(assessment.getId() + ";");
@@ -940,7 +935,7 @@ public class Import_Obj2Db {
     private void updateTableAssessment(TableAssessment assessment, DatabaseHelper helper) throws Exception {
         // region preparation
         // get ids query
-        String idsQuery = Application.getStringContentFromRawFile(this.context, R.raw.table_ids);
+        String idsQuery = App.getStringContentFromRawFile(this.context, R.raw.table_ids);
 
         // append query with id
         idsQuery += String.valueOf(assessment.getId() + ";");
@@ -1029,7 +1024,7 @@ public class Import_Obj2Db {
     private void updateDragAssessment(DragAssessment assessment, DatabaseHelper helper) throws Exception {
         // region preparation
         // get ids query
-        String idsQuery = Application.getStringContentFromRawFile(this.context, R.raw.drag_interaction_ids);
+        String idsQuery = App.getStringContentFromRawFile(this.context, R.raw.drag_interaction_ids);
 
         // append query with id
         idsQuery += String.valueOf(assessment.getId() + ";");

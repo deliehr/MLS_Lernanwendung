@@ -17,10 +17,6 @@ public class Table {
     public Table() {
         this.rowList = new ArrayList<Row>();
     }
-
-    public Table(List<Row> rowList) {
-        this.setRowList(rowList);
-    }
     // endregion
 
     // region object methods

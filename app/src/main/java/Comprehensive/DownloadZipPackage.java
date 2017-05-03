@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -23,14 +22,10 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-
 import Components.Assessment;
 import Components.RelatedGroup;
 import Components.Support;
 import it.liehr.mls_app.R;
-import mf.org.apache.xerces.jaxp.validation.XMLSchemaFactory;
 
 public class DownloadZipPackage extends AsyncTask<String, String, String> {
     private String mUrl = "";
@@ -70,13 +65,13 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
                 if(this.extractPackage()) {
                     // extracting ok, verify extracted files
                     // info
-                    this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_package_extracted) + "\n");
+                    //this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_package_extracted) + "\n");
 
                     // verify extracted files
                     if(this.verifyExtractedFiles()) {
                         // verification ok, start import
                         // info
-                        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_extracted_files) + ": Ok\n");
+                        //this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_extracted_files) + ": Ok\n");
 
                         // merge directories
                         if(mergeDirectories()) {
@@ -127,7 +122,7 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
                         }
                     } else {
                         // error info
-                        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_extracted_files) + ": Error\n");
+                        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_extracted_files) + ": " + mContext.getString(R.string.activity_config_import_message_verify_extracted_files_error) + "\n");
                     }
                 }
             }
@@ -137,17 +132,17 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
         }
 
         // delete temp directories and files
-        File directoryExtract = new File(((Activity) this.mContext).getFilesDir() + Application.relativeExtractDataDirectory);
+        File directoryExtract = new File(((Activity) this.mContext).getFilesDir() + App.relativeExtractDataDirectory);
         File directoryTmp = new File(((Activity) this.mContext).getFilesDir() + "/tmp/");
 
         try {
-            Application.deleteRecursive(directoryExtract);
+            App.deleteRecursive(directoryExtract);
         } catch (Exception e) {
             Log.e("Error", "DownloadZipPackage doInBackground(): " + e.getMessage());
         }
 
         try {
-            Application.deleteRecursive(directoryTmp);
+            App.deleteRecursive(directoryTmp);
         } catch (Exception e) {
             Log.e("Error", "DownloadZipPackage doInBackground(): " + e.getMessage());
         }
@@ -166,7 +161,7 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
             URL url = new URL(mUrl);
 
             // check connection
-            if(Application.checkConnection(url)) {
+            if(App.checkConnection(url)) {
                 URLConnection connection = url.openConnection();
                 connection.setConnectTimeout(2000);
                 connection.connect();
@@ -241,9 +236,9 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
      */
     private Boolean extractPackage() {
         // info to user
-        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_downloaded_file_ok) + "\n");
-        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_package_size) + ": " + (new File(mTargetDownloadedZipFile).length() / 1000 / 1000) + " MBytes\n");    // not divide: 1024
-        this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_extract_package) + "\n");
+        //this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_verify_downloaded_file_ok) + "\n");
+        //this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_package_size) + ": " + (new File(mTargetDownloadedZipFile).length() / 1000 / 1000) + " MBytes\n");    // not divide: 1024
+        //this.appendTextToResponseTextView(mContext.getString(R.string.activity_config_import_message_extract_package) + "\n");
 
         // start extracting
         try {
@@ -297,32 +292,52 @@ public class DownloadZipPackage extends AsyncTask<String, String, String> {
      * @return True if, assessments_standard.xml and assessments_extended.xml are part of the package. The dtd validation check must be successfull.
      */
     private Boolean verifyExtractedFiles() {
-        // two must be in the package
-        List<File> files = new ArrayList<File>();
-        files.add(new File(mContentFirstTarget + "/assessments_standard.xml"));
-        files.add(new File(mContentFirstTarget + "/assessments_extended.xml"));
-        files.add(new File(mContentFirstTarget + "/assessment_ids_related.xml"));
-        files.add(new File(mContentFirstTarget + "/assessment_support.xml"));
-        
-        // TODO: 29.03.2017 SAX parser validation
+        // assessments_standard.xml
+        // assessments_extended.xml
+        // assessment_ids_related.xml
+        // assessment_support.xml
 
-        // standard and extended
-        if(files.get(0).exists() && files.get(1).exists()) {
-            if(!(Application.checkXmlFileWithDtd(mContext, files.get(0), R.raw.dtd_standard) && Application.checkXmlFileWithDtd(mContext, files.get(1), R.raw.dtd_extended))) {
-                return false;
-            }
+        Validator validatorStandard = new Validator(this.mContext, mContentFirstTarget + "/assessments_standard.xml", "dtd_standard");
+        Validator validatorExtended = new Validator(this.mContext, mContentFirstTarget + "/assessments_extended.xml", "dtd_extended");
+        validatorStandard.validate();
+        validatorExtended.validate();
+
+        if(validatorStandard.isValidationSuccessful() && validatorExtended.isValidationSuccessful()) {
+            return true;
         } else {
-            // abbort import
-            return false;
+            // log errors
+            for(String error:validatorStandard.getValidationWarnings()) {
+                Log.w("xml_validation_std", "warning: " + error);
+            }
+
+            for(String error:validatorStandard.getValidationErrors()) {
+                Log.e("xml_validation_std", "error: " + error);
+            }
+
+            for(String error:validatorStandard.getValidationFatalsErrors()) {
+                Log.e("xml_validation_std", "fatal error: " + error);
+            }
+
+            for(String error: validatorExtended.getValidationWarnings()) {
+                Log.w("xml_validation_ext", "warning: " + error);
+            }
+
+            for(String error:validatorExtended.getValidationErrors()) {
+                Log.e("xml_validation_ext", "error: " + error);
+            }
+
+            for(String error:validatorExtended.getValidationFatalsErrors()) {
+                Log.e("xml_validation_ext", "fatal error: " + error);
+            }
         }
 
-        return true;
+        return false;
     }
 
     private Boolean mergeDirectories() {
         // merge with working directory
-        String directoryExtractPath = ((Activity) this.mContext).getFilesDir() + Application.relativeExtractDataDirectory;
-        String directoryWorkPath = ((Activity) this.mContext).getFilesDir() + Application.relativeWorkingDataDirectory;
+        String directoryExtractPath = ((Activity) this.mContext).getFilesDir() + App.relativeExtractDataDirectory;
+        String directoryWorkPath = ((Activity) this.mContext).getFilesDir() + App.relativeWorkingDataDirectory;
 
         try {
             File extractDirectory = new File(directoryExtractPath);

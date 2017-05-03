@@ -1,18 +1,13 @@
 package it.liehr.mls_app;
 
-import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.SpannableString;
-import android.transition.Visibility;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,10 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -38,16 +31,11 @@ import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.google.android.flexbox.FlexboxLayout;
 
-import org.w3c.dom.Text;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import Comprehensive.Application;
+import Comprehensive.App;
 import Comprehensive.DatabaseHelper;
-import Comprehensive.ExtendedEditText;
 import Comprehensive.ExtendedToggleButton;
 import Comprehensive.ExtendedOnClickListener;
 import Comprehensive.DatePickerFragment;
@@ -224,11 +212,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
                         Cursor resultDays = database.rawQuery(query, null);
                         resultDays.moveToFirst();
@@ -252,7 +240,7 @@ public class ActivityStatistic extends AppCompatActivity {
                                 dateStringList.add(currentDateString);
 
                                 // query for data
-                                String query2 = Application.getStringContentFromRawFile(activity, R.raw.statistic_last_imported);
+                                String query2 = App.getStringContentFromRawFile(activity, R.raw.statistic_last_imported);
                                 query2 = query2.replace("[date]", currentDateString);
 
                                 // search in database for how_solved
@@ -388,11 +376,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
 
                         Cursor resultDays = database.rawQuery(query, null);
@@ -417,7 +405,7 @@ public class ActivityStatistic extends AppCompatActivity {
                                 dateStringList.add(currentDateString);
 
                                 // search for related assessments
-                                String query2 = Application.getStringContentFromRawFile(activity, R.raw.statistic_for_repeating);
+                                String query2 = App.getStringContentFromRawFile(activity, R.raw.statistic_for_repeating);
                                 query2 = query2.replace("[date]", currentDateString);
 
                                 Cursor resultRelated = database.rawQuery(query2, null);
@@ -429,7 +417,7 @@ public class ActivityStatistic extends AppCompatActivity {
                                     List<Integer> assessmentIdsToExclude = new ArrayList<Integer>();
 
                                     // get assessments, which are solved partly_correct and wrong, and which are solved correctly
-                                    Cursor result = helper.getReadableDatabase().rawQuery(Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating), null);
+                                    Cursor result = helper.getReadableDatabase().rawQuery(App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating), null);
                                     result.moveToFirst();
 
                                     if(result.getCount() > 0) {
@@ -440,7 +428,7 @@ public class ActivityStatistic extends AppCompatActivity {
 
                                             if(countCorrectly >= userThreshold) {
                                                 // check if assessments (x = userThreshold) times after another was solved correctly
-                                                String query4 = Application.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating2);
+                                                String query4 = App.getStringContentFromRawFile(activity, R.raw.assessments_for_repeating2);
                                                 query4 = query4.replace("[id]", String.valueOf(assessmentId));
                                                 Cursor result2 = helper.getReadableDatabase().rawQuery(query4, null);
                                                 result2.moveToFirst();
@@ -619,11 +607,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
                         Cursor resultDays = database.rawQuery(query, null);
                         resultDays.moveToFirst();
@@ -722,11 +710,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
 
                         Cursor resultDays = database.rawQuery(query, null);
@@ -881,11 +869,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
                         Cursor resultDays = database.rawQuery(query, null);
                         resultDays.moveToFirst();
@@ -1089,11 +1077,11 @@ public class ActivityStatistic extends AppCompatActivity {
                         // get single days
                         String query = "";
                         if(activity.enabledTimePeriod) {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days_period);
                             query = query.replace("[period_start]", activity.datePeriodStart);
                             query = query.replace("[period_end]", activity.datePeriodEnd);
                         } else {
-                            query = Application.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
+                            query = App.getStringContentFromRawFile(activity, R.raw.assessments_solved_get_days);
                         }
                         Cursor resultDays = database.rawQuery(query, null);
                         resultDays.moveToFirst();
@@ -1117,7 +1105,7 @@ public class ActivityStatistic extends AppCompatActivity {
                                 dateStringList.add(currentDateString);
 
                                 // query for data
-                                String query2 = Application.getStringContentFromRawFile(activity, R.raw.statistic_by_tag);
+                                String query2 = App.getStringContentFromRawFile(activity, R.raw.statistic_by_tag);
                                 query2 = query2.replace("[date]", currentDateString);
                                 query2 = query2.replace("[tag_name]", selectedTag);
 

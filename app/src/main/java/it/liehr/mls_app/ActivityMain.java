@@ -4,36 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.*;
 import android.widget.Button;
-import android.widget.Toast;
 
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.security.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import Comprehensive.Application;
+import Comprehensive.App;
 
 /**
  * Activity class main. First activity in app, shown at startup.
@@ -49,32 +34,18 @@ public class ActivityMain extends AppCompatActivity {
 
         // main config
         // set hashmap file path
-        Application.urlHashMapFilePath = getFilesDir() + "urls.hashmap";
+        App.urlHashMapFilePath = getFilesDir() + "urls.hashmap";
 
+        // app start switch
+        SharedPreferences preferences = this.getSharedPreferences("appStartSwitch", Context.MODE_PRIVATE);
+        String autoSwitch = preferences.getString("appStartSwitch", "false");
 
-        // evaluation
-        try {
-
-            Map<String, String> packageUrlsHashMap = new HashMap<>();
-
-
-            // create new entry in internal hash map
-            packageUrlsHashMap.put("evaluation_local", "http://192.168.0.200/aufgaben_evaluation.zip");
-            packageUrlsHashMap.put("evaluation_online", "http://idragon.de/evaluation/aufgaben_evaluation.zip");
-            //packageUrlsHashMap.put("debug_local_1", "http://192.168.0.200/aufgaben_debug.zip");
-            //packageUrlsHashMap.put("debug_local_2", "http://192.168.0.200/aufgaben_debug2.zip");
-
-            FileOutputStream fileOutputStream = new FileOutputStream(Application.urlHashMapFilePath);
-            ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
-
-            objectOutputStream.writeObject(packageUrlsHashMap);
-            objectOutputStream.close();
-
-        } catch (java.io.FileNotFoundException fnfe) {
-
-        } catch (Exception e) {
-
+        if(autoSwitch.equals("true")) {
+            ((Button) this.findViewById(R.id.btnLearn)).performClick();
         }
+
+        // TODO: 29.04.2017 file structure cleaning
+        // if package contains wrong files and directories... or wrong file/dir structure
     }
 
     @Override

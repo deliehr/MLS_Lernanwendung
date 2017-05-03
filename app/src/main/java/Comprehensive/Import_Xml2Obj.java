@@ -1,19 +1,19 @@
 package Comprehensive;
 
-import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -332,7 +332,6 @@ public class Import_Xml2Obj {
     // endregion
 
     // region methods reading assessments
-
     private Assessment readSingleChoiceAssessment(Element assessmentItem, NamedNodeMap assessmentItemAttributes) {
         // region shuffle attribute
         Element elementChoiceInteraction = (Element) assessmentItem.getElementsByTagName("choiceInteraction").item(0);
@@ -341,12 +340,7 @@ public class Import_Xml2Obj {
 
         // region main assessment data
         SingleChoiceAssessment assessment = new SingleChoiceAssessment(Boolean.valueOf(shuffle));
-        assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
-        assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
-        assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
-        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
-        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
-        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+        assessment = (SingleChoiceAssessment) this.readCommonAttributes(assessment, assessmentItemAttributes);
         // endregion
 
         // region response declaration
@@ -402,12 +396,7 @@ public class Import_Xml2Obj {
 
         // region main assessment data
         MultipleChoiceAssessment assessment = new MultipleChoiceAssessment();
-        assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
-        assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
-        assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
-        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
-        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
-        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+        assessment = (MultipleChoiceAssessment) this.readCommonAttributes(assessment, assessmentItemAttributes);
         assessment.setMaxChoices(Byte.valueOf(maxChoices));
         assessment.setShuffleChoices(Boolean.valueOf(shuffle));
         // endregion
@@ -484,12 +473,7 @@ public class Import_Xml2Obj {
     private Assessment readHotspotAssessment(Element assessmentItem, NamedNodeMap assessmentItemAttributes) throws Exception {
         // region main assessment data
         HotspotAssessment assessment = new HotspotAssessment();
-        assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
-        assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
-        assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
-        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
-        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
-        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+        assessment = (HotspotAssessment) this.readCommonAttributes(assessment, assessmentItemAttributes);
         // endregion
 
         // region response declaration
@@ -561,12 +545,7 @@ public class Import_Xml2Obj {
     private Assessment readTableAssessment(Element assessmentItem, NamedNodeMap assessmentItemAttributes) throws Exception {
         // region main assessment data
         TableAssessment assessment = new TableAssessment();
-        assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
-        assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
-        assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
-        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
-        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
-        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+        assessment = (TableAssessment) this.readCommonAttributes(assessment, assessmentItemAttributes);
         // endregion
 
         // region response declaration
@@ -620,12 +599,7 @@ public class Import_Xml2Obj {
         // endregion
 
         // region main assessment data
-        assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
-        assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
-        assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
-        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
-        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
-        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+        assessment = (DragAssessment) this.readCommonAttributes(assessment, assessmentItemAttributes);
         // endregion
 
         // region prompt
@@ -665,9 +639,6 @@ public class Import_Xml2Obj {
 
         return assessment;
     }
-
-
-
     // endregion
 
     // region helper methods
@@ -950,5 +921,45 @@ public class Import_Xml2Obj {
         return paragraphs;
     }
 
+    /**
+     * Reads the common xml data for an assessment, such as uuid, category tags, ... .
+     * Also, it provides the generation of an uuid, a timestamp or sets the category tag to "extern" if such elements are not existing.
+     * Only reads the following data of an assessment item: id (uuid), creation timestamp, category tags, title, adaptive, time dependency
+     * @param assessment The current assessment
+     * @param assessmentItemAttributes Attributes of xml element <assessmentItem>...</assessmentItem>
+     * @return The currecnt assessment, extended by the readed or generated common data
+     */
+    private Assessment readCommonAttributes(Assessment assessment, NamedNodeMap assessmentItemAttributes) {
+        // contains id, creation timestamp and category tags?
+        // check for id
+        if(assessmentItemAttributes.getNamedItem("id") == null) {
+            assessment.setUuid(UUID.randomUUID().toString());
+        } else {
+            assessment.setUuid(assessmentItemAttributes.getNamedItem("id").getNodeValue().toString());
+        }
+
+        // check for creation timestamp
+        if(assessmentItemAttributes.getNamedItem("creationTimestamp") == null) {
+            Long tsLong = System.currentTimeMillis()/1000;
+            String ts = tsLong.toString();
+
+            assessment.setCreationTimestamp(Integer.valueOf(ts));
+        } else {
+            assessment.setCreationTimestamp(Integer.valueOf(assessmentItemAttributes.getNamedItem("creationTimestamp").getNodeValue().toString()));
+        }
+
+        // check for category tags
+        if(assessmentItemAttributes.getNamedItem("categoryTags") == null) {
+            assessment.setCategoryTags("extern");
+        } else {
+            assessment.setCategoryTags(assessmentItemAttributes.getNamedItem("categoryTags").getNodeValue().toString());
+        }
+
+        assessment.setTitle(assessmentItemAttributes.getNamedItem("title").getNodeValue().toString());
+        assessment.setAdaptive(Boolean.valueOf(assessmentItemAttributes.getNamedItem("adaptive").getNodeValue().toString()));
+        assessment.setTimeDependent(Boolean.valueOf(assessmentItemAttributes.getNamedItem("timeDependent").getNodeValue().toString()));
+
+        return assessment;
+    }
     // endregion
 }

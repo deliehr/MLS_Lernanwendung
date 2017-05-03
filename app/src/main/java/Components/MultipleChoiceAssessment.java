@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import Comprehensive.Application;
-import Comprehensive.DatabaseHelper;
-import Comprehensive.ExtendedButton;
+import Comprehensive.App;
 import Comprehensive.ExtendedCheckBox;
 import Comprehensive.ExtendedOnClickListener;
 import Comprehensive.UsersAssessmentResponse;
@@ -39,7 +38,7 @@ import it.liehr.mls_app.R;
  * @author Dominik Liehr
  * @version 0.02
  */
-public class MultipleChoiceAssessment extends SingleChoiceAssessment implements AssessmentInterface {
+public class MultipleChoiceAssessment extends SingleChoiceAssessment {
     // region object variables
     private List<String> correctValueList = new ArrayList<String>();    // list with identifiers, which are correct
     private KeyValueMappingGroup keyValueMappingGroup;
@@ -51,13 +50,6 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
     // region constructors
     public MultipleChoiceAssessment() {
         this.setIdentifier("choiceMultiple");
-    }
-
-    public MultipleChoiceAssessment(KeyValueMappingGroup kvmg, boolean shuffleChoices, int maxChoices) throws Exception {
-        this.setIdentifier("choiceMultiple");
-        this.setKeyValueMappingGroup(kvmg);
-        this.setShuffleChoices(shuffleChoices);
-        this.setMaxChoices(maxChoices);
     }
     // endregion
 
@@ -107,10 +99,14 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
             for(String identifier:this.getCorrectValueList()) {
                 if(ccb.getIdentifier().equals(identifier)) {
                     found = true;
+
+                    if(ccb.getParent() instanceof LinearLayout) {
+                        ((LinearLayout) ccb.getParent()).setBackgroundResource(R.drawable.mc_solved_correct);
+                    }
+
                     break;
                 }
             }
-
             // found?
             if(found) {
                 // identifier found in correct value list
@@ -119,6 +115,19 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
                     if(ccb.getIdentifier().equals(this.getKeyValueMappingGroup().getKeyValueMappingList().get(i).getMapKey())) {
                         // found
                         startValue += this.getKeyValueMappingGroup().getKeyValueMappingList().get(i).getMappedValue();
+                        break;
+                    }
+                }
+            } else {
+                // not found
+                ((LinearLayout) ccb.getParent()).setBackgroundResource(R.drawable.mc_solved_falsely);
+
+                // search for mapped value
+                for(int i=0;i < this.getKeyValueMappingGroup().getKeyValueMappingList().size();i++) {
+                    if(ccb.getIdentifier().equals(this.getKeyValueMappingGroup().getKeyValueMappingList().get(i).getMapKey())) {
+                        // found
+                        int mappedValue = Math.abs(this.getKeyValueMappingGroup().getKeyValueMappingList().get(i).getMappedValue());
+                        startValue -= (mappedValue);
                         break;
                     }
                 }
@@ -132,36 +141,10 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
 
         if(startValue > this.getKeyValueMappingGroup().getDefaultValue() && startValue < lowerBound) {
             response = UsersAssessmentResponse.Partly_Correct;
+            Toast.makeText(this.getContext(), this.getContext().getString(R.string.activity_learn_mc_required_points), Toast.LENGTH_SHORT).show();
         }
 
-        // assessments to process
-        if(!this.isAlreadySolved()) {
-            ActivityLearn.assessmentsToProcess--;
-        }
-
-        // statistic
-        this.completeStatisticEntry(response);
-
-        // user response
-        Application.showUserResponse(this.getContext(), (LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling), response);
-
-        // mark solved
-        this.setAlreadySolved(true);
-        this.setHowSolved(response);
-
-        // buttons
-        if(ActivityLearn.assessmentsToProcess == 0) {
-            // disable buttons
-            Application.disableLearnButtons(this.getContext());
-
-            // show summary button (only #assessments > 1)
-            if(((ActivityLearn) this.getContext()).assessments.size() > 1) {
-                Button b = new Button(this.getContext());
-                b.setText(this.getContext().getString(R.string.activity_learn_message_all_assessments_solved));
-                b.setOnClickListener(Application.getNewSummaryOnClickListener(this.getContext()));
-                ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling)).addView(b);
-            }
-        }
+        this.handleUserResponseEnd(response);
 
         // disable check button
         this.checkButton.setEnabled(false);
@@ -175,14 +158,11 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
     // region object methods
     @Override
     public void displayAssessment(Context context, LinearLayout targetLayout) {
-        // start statistic
-        this.startStatisticEntry();
+        // display start
+        this.displayAssessmentStart(context, targetLayout);
 
         // reset clicked textboxed
         this.clickedCheckBoxes.clear();
-
-        // remove views
-        targetLayout.removeAllViews();
 
         // click listener
         this.simpleChoiceOnClickListener = new ExtendedOnClickListener(context, new Object[]{this}) {
@@ -207,23 +187,6 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
                 relatedAssessment.handleUserResponse(view);
             }
         };
-
-        // create assessment
-        TextView tvTitle = new TextView(context);
-        tvTitle.setText(this.getTitle());
-        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-        tvTitle.setId(View.generateViewId());
-        targetLayout.addView(tvTitle);
-
-        // paragraphs
-        this.displayItemBodyParagraphs(targetLayout);
-
-        // prompt
-        TextView tvPrompt = new TextView(context);
-        tvPrompt.setText(this.getPrompt());
-        tvPrompt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        tvPrompt.setId(View.generateViewId());
-        targetLayout.addView(tvPrompt);
 
         // selections
         LinearLayout.LayoutParams paramsSelections = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -273,13 +236,16 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
             choiceLayout.setBackground(background);
             choiceLayout.setPadding(10, 10, 10, 10);
 
+
             // button with text and identifer
-            LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams checkBoxParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             checkBoxParams.setMargins(0, 0, 10, 0);
+            checkBoxParams.gravity = Gravity.CENTER_VERTICAL;
 
             // caption
             TextView tvCaption = new TextView(this.getContext());
             tvCaption.setText(currentChoice.getCaption());
+            tvCaption.setPadding(5,5,5,5);
 
             // button
             ExtendedCheckBox simpleChoiceCheckBox = new ExtendedCheckBox(context);
@@ -288,7 +254,7 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
             simpleChoiceCheckBox.setLayoutParams(checkBoxParams);
 
             if(currentChoice.getCaption().equals("")) {
-                simpleChoiceCheckBox.setText("Antwort " + String.valueOf((i+1)));
+                simpleChoiceCheckBox.setText(this.getContext().getString(R.string.activity_learn_mc_label_answer) + " " + String.valueOf((i+1)));
             }
 
             simpleChoiceCheckBox.setAssessmentObject(this);
@@ -297,7 +263,7 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
 
             // contains single choice an image?
             if(currentChoice.getImageSource() != null) {
-                File imageFile = new File(this.getContext().getFilesDir() + Application.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + currentChoice.getImageSource());
+                File imageFile = new File(this.getContext().getFilesDir() + App.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + currentChoice.getImageSource());
                 if(imageFile.exists()) {
                     // image exists, show
                     Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -320,12 +286,12 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
         }
 
         // add check button
-        this.checkButton = Application.getNewCheckButton(linearLayoutSelections, this, this.checkUserResponseOnClickListener);
+        this.checkButton = App.getNewCheckButton(linearLayoutSelections, this, this.checkUserResponseOnClickListener);
 
         targetLayout.addView(linearLayoutSelections);
 
         // show support
-        Application.addSupportToLayout(this.getContext(), this);
+        App.addSupportToLayout(this.getContext(), this);
     }
     // endregion
 
@@ -367,10 +333,6 @@ public class MultipleChoiceAssessment extends SingleChoiceAssessment implements 
         // region object methods
         public void addKeyValueMapping(KeyValueMapping kvm) {
             this.keyValueMappingList.add(kvm);
-        }
-
-        protected void display(Context context, RelativeLayout targetLayout) {
-            Log.i("Info", "Multiplechoice");
         }
         // endregion
 

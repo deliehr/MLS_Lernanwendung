@@ -2,14 +2,15 @@ package Comprehensive;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.DragEvent;
@@ -26,26 +27,22 @@ import android.widget.TextView;
 import com.google.android.flexbox.FlexboxLayout;
 
 import org.apache.commons.lang3.StringUtils;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;/**/
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.URL;
 
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import Components.Assessment;
 import Components.Cell;
@@ -62,18 +59,25 @@ import Components.TextboxSupport;
 import it.liehr.mls_app.ActivityLearn;
 import it.liehr.mls_app.R;
 import Comprehensive.DatabaseHelper.TableNames;
-import mf.javax.xml.parsers.DocumentBuilder;
-import mf.javax.xml.parsers.DocumentBuilderFactory;
-import mf.org.apache.xerces.jaxp.SAXParserImpl;
 
-public class Application {
+public class App {
     // region application configuration finals
     public final static String relativeExtractDataDirectory = "/extract/";
     public final static String relativeWorkingDataDirectory = "/work/";
     public final static String relativeTmpDownloadFile = "/tmp/download.zip";
     public final static int supportTextTextSize = 16;    // dp / dip
     public static String urlHashMapFilePath = "urls.hashmap";
+    //public final static String regularExpressionPackageTitleAndUrl = "[a-zA-Z_-\\d]*:http(s?)://[a-zA-Z_./-\\d]*(.zip)";
+    public final static String regularExpressionPackageTitleAndUrl = "[a-zA-Z_-{0-9}]*:http(s?)://[a-zA-Z_./-{0-9}]*(.zip)";
     // endregion
+
+    public static int convertDpToPx(Activity activity, int dp) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+
+        return (int) Math.ceil(dp * logicalDensity);
+    }
 
     public static void addSupportToLayout(Context context, Assessment assessment) {
         // scroll view for support
@@ -239,9 +243,9 @@ public class Application {
                                 // cell data
                                 cell.setIdentifier(resultCells.getString(0));
                                 cell.setCellValue(resultCells.getString(1));
-                                cell.setHead(Application.parseSQLLiteBoolean(resultCells.getInt(2)));
+                                cell.setHead(App.parseSQLLiteBoolean(resultCells.getInt(2)));
                                 cell.setColspan(resultCells.getInt(3));
-                                cell.setWriteable(Application.parseSQLLiteBoolean(resultCells.getInt(4)));
+                                cell.setWriteable(App.parseSQLLiteBoolean(resultCells.getInt(4)));
 
                                 // add cell
                                 row.addCell(cell);
@@ -348,15 +352,13 @@ public class Application {
      */
     public static TableLayout getTableLayoutByTable(Object relatedObject, final Table table, Context context) {
         // cell properties
-        int defaultCellWidth = 30;
-        int defaultCellHeight = 10;
-        int defaultCellStrokeColor = Color.rgb(0,0,0);
-        int defaultCellStrokeWidth = 1;
+        int defaultCellWidth = App.convertDpToPx((Activity) context, 50);
+        int defaultCellHeight = App.convertDpToPx((Activity) context, 20);
 
         // table in supprt?
         if(relatedObject instanceof TableAssessment || relatedObject instanceof DragAssessment) {
-            defaultCellWidth = 300;
-            defaultCellHeight = 100;
+            defaultCellWidth = App.convertDpToPx((Activity) context, 200);
+            defaultCellHeight = App.convertDpToPx((Activity) context, 50);
         }
 
         // new table
@@ -444,7 +446,7 @@ public class Application {
                         tvCell.setId(View.generateViewId());
                         tvCell.setLayoutParams(cellParams);
                         tvCell.setMinHeight(height);
-                        //tvCell.setMinWidth(width);
+                        tvCell.setMinWidth(width);
                         tvCell.setText(spannedString);
                         tvCell.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
                         tvCell.setGravity(Gravity.CENTER);
@@ -509,7 +511,7 @@ public class Application {
                                     break;
                                 }
                             } catch (Exception e) {
-                                Log.e("Error", "Application getTableLayoutByTable(): " + e.getMessage());
+                                Log.e("Error", "App getTableLayoutByTable(): " + e.getMessage());
                             }
                         }
                     }
@@ -522,7 +524,7 @@ public class Application {
                     // assessment
                     DragAssessment assessment = (DragAssessment) relatedObject;
 
-                    int width = defaultCellWidth * cell.getColspan();
+                    //int width = defaultCellWidth * cell.getColspan();
                     int height = defaultCellHeight;
 
                     // TypedValue.COMPLEX_UNIT_DIP  //Device Independent Pixels
@@ -565,7 +567,7 @@ public class Application {
                             try {
                                 linearCell.setIdentifier(columnIdentifiers[i]);
                             } catch (Exception e) {
-                                Log.e("Error", "Application getTableLayoutByTable(): " + e.getMessage());
+                                Log.e("Error", "App getTableLayoutByTable(): " + e.getMessage());
                             }
                         } else {
                             // row
@@ -604,7 +606,7 @@ public class Application {
                                                 // add button to available drag items
                                                 assessment.getDragItemLayout().addView(dragButton);
                                             } catch (Exception e) {
-                                                Log.e("Error", "Application getLayoutTable ExtendedOnDragListener: " + e.getMessage());
+                                                Log.e("Error", "App getLayoutTable ExtendedOnDragListener: " + e.getMessage());
                                             }
                                         }
 
@@ -628,7 +630,7 @@ public class Application {
 
                                                 }
                                             } catch (Exception e) {
-                                                Log.e("Error", "Application getLayoutTable ExtendedOnDragListener: " + e.getMessage());
+                                                Log.e("Error", "App getLayoutTable ExtendedOnDragListener: " + e.getMessage());
                                             }
                                         }
 
@@ -699,51 +701,6 @@ public class Application {
 
 
         return content.toString();
-    }
-
-    public static boolean checkXmlFileWithDtd(Context context, File xmlFile, int dtdFileId) {
-        try {
-            // create new file, which will be checked
-            String fileToCheckPath = ((Activity) context).getFilesDir() + "/dtdcheck.xml";
-            File fileToCheck = new File(fileToCheckPath);
-
-            // read dtd
-            StringBuilder contentToCheck = new StringBuilder();
-            contentToCheck.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-            contentToCheck.append(Application.getStringContentFromRawFile(context, dtdFileId));     // dtd read
-            contentToCheck.append("\n");
-
-            // get content from assessment xml file
-            String xmlFileAssessments = Application.getStringContentFromFile(xmlFile);
-
-            BufferedReader bufferedReader = new BufferedReader(new StringReader(xmlFileAssessments));
-            String line = "";
-            while((line = bufferedReader.readLine()) != null) {
-                if(!line.contains("xml version")) {
-                    contentToCheck.append(line + "\n");
-                }
-            }
-
-            // safe to check file
-            if(fileToCheck.exists()) {
-                fileToCheck.delete();
-                fileToCheck.createNewFile();
-            }
-
-            PrintWriter printWriter = new PrintWriter(fileToCheckPath);
-            printWriter.print(contentToCheck.toString());
-            printWriter.flush();
-            printWriter.close();
-
-            // after check, delete test file
-            if(fileToCheck.exists()) {
-                fileToCheck.delete();
-            }
-        } catch (Exception e) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -920,6 +877,11 @@ public class Application {
                         summaryLayout.addView(singleLayout);
                     }
 
+                    LinearLayout.LayoutParams supportScrollViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    supportScrollViewParams.weight = 1;
+
+                    ((ScrollView) ((Activity) this.getContext()).findViewById(R.id.scrollViewLearn)).removeAllViews();
+                    ((ScrollView) ((Activity) this.getContext()).findViewById(R.id.scrollViewLearn)).setLayoutParams(supportScrollViewParams);
                     ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.linearLayoutAssessmentContent)).removeAllViews();
                     ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.linearLayoutAssessmentContent)).addView(summaryLayout);
                 }
@@ -927,5 +889,30 @@ public class Application {
         };
 
         return listener;
+    }
+
+    public static void createFile(String outputFile, Context context, int ressourceId) throws IOException {
+        final OutputStream outputStream = new FileOutputStream(outputFile);
+
+        Resources resources = context.getResources();
+        byte[] largeBuffer = new byte[1024 * 4];
+        int totalBytes = 0;
+        int bytesRead = 0;
+
+        InputStream inputStream = resources.openRawResource(ressourceId);
+        while ((bytesRead = inputStream.read(largeBuffer)) > 0) {
+            if (largeBuffer.length == bytesRead) {
+                outputStream.write(largeBuffer);
+            } else {
+                byte[] shortBuffer = new byte[bytesRead];
+                System.arraycopy(largeBuffer, 0, shortBuffer, 0, bytesRead);
+                outputStream.write(shortBuffer);
+            }
+            totalBytes += bytesRead;
+        }
+        inputStream.close();
+
+        outputStream.flush();
+        outputStream.close();
     }
 }

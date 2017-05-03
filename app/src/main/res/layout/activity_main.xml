@@ -19,22 +19,42 @@
                 android:id="@+id/btnLearn"
                 android:layout_width="160dp"
                 android:layout_height="80dp"
+                android:layout_weight="1"
                 android:text="@string/main_menu_button_learn"
-                android:onClick="btnSelectionOnClick"/>
+                android:onClick="btnSelectionOnClick"
+                android:background="@drawable/activity_selection_textview_title"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"/>
 
             <Button
                 android:id="@+id/btnStatistic"
                 android:layout_width="160dp"
                 android:layout_height="80dp"
+                android:layout_weight="1"
                 android:text="@string/main_menu_button_statistic"
-                android:onClick="btnStatisticOnClick"/>
+                android:onClick="btnStatisticOnClick"
+                android:background="@drawable/activity_selection_textview_title"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"/>
 
             <Button
                 android:id="@+id/btnConfiguration"
                 android:layout_width="160dp"
+                android:layout_weight="1"
                 android:layout_height="80dp"
                 android:onClick="btnConfigOnClick"
-                android:text="@string/main_menu_button_config" />
+                android:text="@string/main_menu_button_config"
+                android:background="@drawable/activity_selection_textview_title"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"/>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

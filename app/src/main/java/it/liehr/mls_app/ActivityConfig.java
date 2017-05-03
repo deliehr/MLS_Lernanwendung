@@ -1,10 +1,10 @@
 package it.liehr.mls_app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,14 +17,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,8 +36,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import Comprehensive.Application;
+import Comprehensive.App;
 import Comprehensive.DatabaseHelper;
 import Comprehensive.DownloadZipPackage;
 
@@ -50,6 +52,7 @@ public class ActivityConfig extends AppCompatActivity {
     private Map<String, String> packageUrlsHashMap = new HashMap<>();
     private static View mPopupView;
     private static PopupWindow mPopupWindow;
+    public static ActivityConfig activityConfigObject = null;
 
     // region specific listener
     private SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
@@ -115,19 +118,30 @@ public class ActivityConfig extends AppCompatActivity {
 
     // region button on click listener
     public void btnAddPackageSource(View view) {
-        String description = ((EditText) findViewById(R.id.etSourcename)).getText().toString();
-        String packageUrl = ((EditText) findViewById(R.id.etSourceUrl)).getText().toString();
+        try {
+            String description = ((EditText) findViewById(R.id.etSourcename)).getText().toString();
+            String packageUrl = ((EditText) findViewById(R.id.etSourceUrl)).getText().toString();
 
-        if(!description.isEmpty() && !packageUrl.isEmpty()) {
-            // check for blank space, replace with _
-            if(description.contains(" ")) {
-                description = description.replace(" ", "_");
+            if(!description.isEmpty() && !packageUrl.isEmpty()) {
+                // check for blank space, replace with _
+                if(description.contains(" ")) {
+                    description = description.replace(" ", "_");
 
-                // info for user
-                Toast.makeText(this, "Leerzeichen durch _ ersetzt", Toast.LENGTH_SHORT);
+                    // info for user
+                    Toast.makeText(this, this.getString(R.string.activity_config_message_replaces_blanks), Toast.LENGTH_SHORT).show();
+                }
+
+                // reg ex match?
+                String packageNameUrl = description + ":" + packageUrl;
+                if(Pattern.matches(App.regularExpressionPackageTitleAndUrl, packageNameUrl)) {
+                    writeToHashmapFile(description, packageUrl);
+                    Toast.makeText(this, this.getString(R.string.activity_config_message_package_source_added_by_qr), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(this, this.getString(R.string.activity_config_message_regex_mismatch), Toast.LENGTH_LONG).show();
+                }
             }
-
-            writeToHashmapFile(description, packageUrl);
+        } catch (Exception e) {
+            Log.e("AddPackage", e.getMessage());
         }
     }
 
@@ -149,8 +163,8 @@ public class ActivityConfig extends AppCompatActivity {
         TextView tv = (TextView) ActivityConfig.mPopupView.findViewById(R.id.tvImportStatus);
         String url = packageUrlsHashMap.get(mSelectedUrlKey);
 
-        String targetZipFile = getFilesDir() + Application.relativeTmpDownloadFile;
-        String targetDir = getFilesDir() + Application.relativeExtractDataDirectory;
+        String targetZipFile = getFilesDir() + App.relativeTmpDownloadFile;
+        String targetDir = getFilesDir() + App.relativeExtractDataDirectory;
 
         DownloadZipPackage download = new Comprehensive.DownloadZipPackage(url, targetZipFile, targetDir, this, tv);
         download.execute();
@@ -203,7 +217,7 @@ public class ActivityConfig extends AppCompatActivity {
             theBigBang.add(new File(this.getFilesDir() + "/extract/"));
             theBigBang.add(new File(this.getFilesDir() + "/fileurls.hashmap"));
             for(File f:theBigBang) {
-                Comprehensive.Application.deleteRecursive(new File(f.getAbsolutePath()));
+                App.deleteRecursive(new File(f.getAbsolutePath()));
             }
 
             Toast.makeText(this, R.string.activity_config_reset_message_reset_application, Toast.LENGTH_SHORT).show();
@@ -212,12 +226,21 @@ public class ActivityConfig extends AppCompatActivity {
             Log.e("Error", "Activity config: Removing all assessments: " + e.getMessage());
         }
     }
+
+    public void btnAddPackageSourceByQrCode(View view) {
+        try {
+            Intent intent = new Intent(this, ActivityQrCodeScanner.class);
+            this.startActivity(intent);
+        } catch (Exception e) {
+            Log.e("intent", e.getMessage());
+        }
+    }
     // endregion
 
     // region hash map functionalities
     private void readUrlHashmapFile() {
         // iterate stored urls, hash map is serializable
-        File urlHashMapFile = new File(Application.urlHashMapFilePath);
+        File urlHashMapFile = new File(App.urlHashMapFilePath);
 
         // check if file exists
         try {
@@ -231,7 +254,7 @@ public class ActivityConfig extends AppCompatActivity {
 
         // read file
         try {
-            FileInputStream fis = new FileInputStream(Application.urlHashMapFilePath);
+            FileInputStream fis = new FileInputStream(App.urlHashMapFilePath);
             ObjectInputStream ois = new ObjectInputStream(fis);
             this.packageUrlsHashMap = (HashMap) ois.readObject();
             ois.close();
@@ -249,7 +272,7 @@ public class ActivityConfig extends AppCompatActivity {
         this.showHashmapEntries();
     }
 
-    private void writeToHashmapFile(String key, String value) {
+    protected void writeToHashmapFile(String key, String value) {
         // create new entry in internal hash map
         this.packageUrlsHashMap.put(key, value);
 
@@ -263,7 +286,7 @@ public class ActivityConfig extends AppCompatActivity {
     private void writeHashmap() {
         // write changed to file
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(Application.urlHashMapFilePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(App.urlHashMapFilePath);
             ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
 
             objectOutputStream.writeObject(this.packageUrlsHashMap);
@@ -312,6 +335,24 @@ public class ActivityConfig extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_config);
+
+        Switch sw = (Switch) this.findViewById(R.id.switchAppStart);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if(isChecked) {
+                SharedPreferences.Editor spe = ActivityConfig.mPreferences.edit();
+                spe.putString("appStartSwitch", "true");
+                spe.commit();
+            } else {
+                SharedPreferences.Editor spe = ActivityConfig.mPreferences.edit();
+                spe.putString("appStartSwitch", "false");
+                spe.commit();
+            }
+            }
+        });
+
+        ActivityConfig.activityConfigObject = this;
     }
 
     @Override
@@ -341,6 +382,17 @@ public class ActivityConfig extends AppCompatActivity {
 
         // read hashmap file
         this.readUrlHashmapFile();
+
+        // app start switch
+        // get shared preferences
+        ActivityConfig.mPreferences = this.getSharedPreferences("appStartSwitch", Context.MODE_PRIVATE);
+        String appStart = ActivityConfig.mPreferences.getString("appStartSwitch", "false");
+
+        if(appStart.equals("true")) {
+            ((Switch) this.findViewById(R.id.switchAppStart)).setChecked(true);
+        } else {
+            ((Switch) this.findViewById(R.id.switchAppStart)).setChecked(false);
+        }
     }
 
     // region menu (dot points)

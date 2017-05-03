@@ -13,15 +13,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import Comprehensive.Application;
-import Comprehensive.DatabaseHelper;
+import Comprehensive.App;
 import Comprehensive.ExtendedButton;
 import Comprehensive.UsersAssessmentResponse;
 import it.liehr.mls_app.ActivityLearn;
@@ -34,10 +32,10 @@ import it.liehr.mls_app.R;
  * @author Dominik Liehr
  * @version 0.06
  */
-public class SingleChoiceAssessment extends Assessment implements AssessmentInterface {
+public class SingleChoiceAssessment extends Assessment {
     //region object variables
     private String correctValueIdentifier;
-    private List<SimpleChoice> simpleChoiceList = new ArrayList<>();    // list with choice elements
+    private List<SimpleChoice> simpleChoiceList = new ArrayList<SimpleChoice>();    // list with choice elements
     private boolean shuffleChoices = false; // default value for shuffling
     private int maxChoices = 1;    // max selectable choices
     private String responseIdentifier;  // response identifer
@@ -148,69 +146,20 @@ public class SingleChoiceAssessment extends Assessment implements AssessmentInte
                 break;
         }
 
-        // assessments to process
-        if(!this.isAlreadySolved()) {
-            ActivityLearn.assessmentsToProcess--;
-        }
-
-        // statistic
-        this.completeStatisticEntry(response);
-
-        // user response
-        Application.showUserResponse(this.getContext(), (LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling), response);
-
-        // mark solved
-        this.setAlreadySolved(true);
-        this.setHowSolved(response);
-
-        // buttons
-        if(ActivityLearn.assessmentsToProcess == 0) {
-            // disable buttons
-            Application.disableLearnButtons(this.getContext());
-
-            // show summary button (only #assessments > 1)
-            if(((ActivityLearn) this.getContext()).assessments.size() > 1) {
-                Button b = new Button(this.getContext());
-                b.setText(this.getContext().getString(R.string.activity_learn_message_all_assessments_solved));
-                b.setOnClickListener(Application.getNewSummaryOnClickListener(this.getContext()));
-                ((LinearLayout) ((Activity) this.getContext()).findViewById(R.id.layoutAssessmentHandling)).addView(b);
-            }
-        }
+        this.handleUserResponseEnd(response);
     }
 
     // region object methods
     /**
      * Checks, if an specified identifier (key) in the correct value list exists
-     * @param key Identifier
+     * @param context Context
+     * @param targetLayout target LinearLayout
      * @return True, if identifier (key) exists, false, if not
      */
-    public boolean hasIdentifierValue(String key) {
-        return this.getCorrectValueIdentifier().equals(key);
-    }
-
+    @Override
     public void displayAssessment(Context context, LinearLayout targetLayout) {
-        // start statistic
-        this.startStatisticEntry();
-
-        // remove views
-        targetLayout.removeAllViews();
-
-        // create assessment
-        TextView tvTitle = new TextView(context);
-        tvTitle.setText(this.getTitle());
-        tvTitle.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 28);
-        tvTitle.setId(View.generateViewId());
-        targetLayout.addView(tvTitle);
-
-        // paragraphs
-        this.displayItemBodyParagraphs(targetLayout);
-
-        // prompt
-        TextView tvPrompt = new TextView(context);
-        tvPrompt.setText(this.getPrompt());
-        tvPrompt.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
-        tvPrompt.setId(View.generateViewId());
-        targetLayout.addView(tvPrompt);
+        // display start
+        this.displayAssessmentStart(context, targetLayout);
 
         // selections
         LinearLayout.LayoutParams paramsSelections = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -282,7 +231,7 @@ public class SingleChoiceAssessment extends Assessment implements AssessmentInte
 
             // contains single choice an image?
             if(currentChoice.getImageSource() != null) {
-                File imageFile = new File(this.getContext().getFilesDir() + Application.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + currentChoice.getImageSource());
+                File imageFile = new File(this.getContext().getFilesDir() + App.relativeWorkingDataDirectory + "media/assessments/" + this.getUuid() + "/" + currentChoice.getImageSource());
                 if(imageFile.exists()) {
                     // image exists, show
                     Bitmap imageBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -304,7 +253,7 @@ public class SingleChoiceAssessment extends Assessment implements AssessmentInte
         targetLayout.addView(linearLayoutSelections);
 
         // show support
-        Application.addSupportToLayout(this.getContext(), this);
+        App.addSupportToLayout(this.getContext(), this);
     }
     // endregion
 }

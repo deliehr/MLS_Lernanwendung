@@ -3,10 +3,9 @@ package Components;
 import android.content.Context;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import Comprehensive.Application;
+import Comprehensive.App;
 
 /**
  * Class for textbox support
@@ -25,7 +24,7 @@ public class TextboxSupport extends Support implements SupportInterface {
     public void displaySupport(Context context, LinearLayout targetLinearLayout) {
         TextView textView = new TextView(context);
         textView.setText(this.getTextBoxContent());
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Application.supportTextTextSize);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, App.supportTextTextSize);
 
         targetLinearLayout.addView(textView);
     }

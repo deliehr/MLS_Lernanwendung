@@ -2,9 +2,6 @@ package Comprehensive;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatButton;
-import android.widget.Button;
-
-import Components.Assessment;
 
 public class ExtendedDragButton extends AppCompatButton {
     // region object variables

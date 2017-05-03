@@ -1,10 +1,7 @@
 package Comprehensive;
 
 import android.content.Context;
-import android.view.MotionEvent;
 import android.view.View;
-
-import Components.Assessment;
 
 /**
  * Extension of the View.OnTouchListener.

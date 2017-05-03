@@ -11,7 +11,7 @@ package Components;
 public class StandardCell extends Cell {
     // region object variables
     private String cellValue;
-    private Boolean isWriteable;
+    private boolean isWriteable;
     // endregion
 
     // region constructors

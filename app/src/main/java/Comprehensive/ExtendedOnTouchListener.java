@@ -4,8 +4,6 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 
-import Components.Assessment;
-
 /**
  * Extension of the View.OnTouchListener.
  * Now the access to internal properties and methods is possible inclusive context property.

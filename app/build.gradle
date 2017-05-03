@@ -4,7 +4,7 @@ android {
     signingConfigs {
     }
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "it.liehr.mls_app"
         minSdkVersion 17
@@ -30,10 +30,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile files('libs/xerces-for-android.jar')
-    compile 'com.android.support:appcompat-v7:25.3.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android:flexbox:0.2.6'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'me.dm7.barcodescanner:zxing:1.9.1'
     testCompile 'junit:junit:4.12'
 }

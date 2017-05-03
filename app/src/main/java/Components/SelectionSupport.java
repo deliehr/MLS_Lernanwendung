@@ -1,5 +1,6 @@
 package Components;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import Comprehensive.App;
 import it.liehr.mls_app.R;
 
 /**
@@ -29,18 +32,23 @@ public class SelectionSupport extends Support implements SupportInterface {
     // endregion
 
     // region interface
-
     @Override
     public void displaySupport(Context context, LinearLayout targetLinearLayout) {
-        for(String selection:this.getSelections()) {
-            TextView tv = new TextView(context);
-            tv.setId(View.generateViewId());
-            tv.setText(selection);
-            targetLinearLayout.addView(tv);
-        }
+        // show prompt
+        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        TextView prompt = new TextView(context);
+        prompt.setText(this.getPrompt());
+        prompt.setLayoutParams(tvParams);
+        targetLinearLayout.addView(prompt);
+
+        // spinner
+        Spinner spinner = new Spinner(context);
+        spinner.setMinimumHeight(App.convertDpToPx((Activity) context, 50));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.getSelections());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        targetLinearLayout.addView(spinner);
     }
-
-
     // endregion
 
     // region object methods

@@ -80,5 +80,36 @@
             android:orientation="vertical"
             android:id="@+id/layoutAssessmentHandling">
         </LinearLayout>
+
+        <!-- menu bar -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:id="@+id/btnPrevAssessmentBottom"
+                android:onClick="btnPrevAssessmentOnClick"
+                android:text="@string/activity_learn_button_prev_assessment"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:id="@+id/btnNextAssessmentBottom"
+                android:onClick="btnNextAssessmentOnClick"
+                android:text="@string/activity_learn_button_next_assessment"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayoutAssessmentIndexBottom"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

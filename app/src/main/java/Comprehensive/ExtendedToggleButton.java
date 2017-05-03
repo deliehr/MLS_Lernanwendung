@@ -5,8 +5,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ToggleButton;
 
-import it.liehr.mls_app.R;
-
 /**
  * Extends the button widget.
  * Used for the selection of assessments as a category button on the left side.

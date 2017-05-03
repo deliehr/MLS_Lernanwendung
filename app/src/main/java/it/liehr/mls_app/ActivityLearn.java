@@ -1,6 +1,5 @@
 package it.liehr.mls_app;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.database.SQLException;
 import android.graphics.Color;
@@ -19,6 +18,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Comprehensive.App;
 import Components.Assessment;
 import Components.DragAssessment;
 import Components.HotspotAssessment;
@@ -26,7 +27,8 @@ import Components.MultipleChoiceAssessment;
 import Components.SingleChoiceAssessment;
 import Components.TableAssessment;
 import Comprehensive.DatabaseHelper;
-import Comprehensive.UsersAssessmentResponse;
+
+import static Comprehensive.App.convertDpToPx;
 
 public class ActivityLearn extends AppCompatActivity {
     // region object variables
@@ -101,11 +103,13 @@ public class ActivityLearn extends AppCompatActivity {
             // on next prev position is an assessment
             if(this.currentAssessmentIndex - 1 == 0) {
                 // next assessment will be the first
-                view.setEnabled(false);
+                this.findViewById(R.id.btnPrevAssessment).setEnabled(false);
+                this.findViewById(R.id.btnPrevAssessmentBottom).setEnabled(false);
             }
 
             this.currentAssessmentIndex -= 1;
             this.findViewById(R.id.btnNextAssessment).setEnabled(true);
+            this.findViewById(R.id.btnNextAssessmentBottom).setEnabled(true);
             this.displayAssessment(this.currentAssessmentIndex);
             //this.assessments.get(this.currentAssessmentIndex).setHowSolved(UsersAssessmentResponse.Wrong);
             ((LinearLayout) this.findViewById(R.id.layoutAssessmentHandling)).removeAllViews();
@@ -117,10 +121,11 @@ public class ActivityLearn extends AppCompatActivity {
         // check index == 0
         if (this.currentAssessmentIndex == 0) {
             Button prevButton = (Button) this.findViewById(R.id.btnPrevAssessment);
+            Button prevButtonBottom = (Button) this.findViewById(R.id.btnPrevAssessmentBottom);
             prevButton.setEnabled(false);
+            prevButtonBottom.setEnabled(false);
         }
     }
-
 
     public void btnNextAssessmentOnClick(View view) {
         // check next index position
@@ -128,11 +133,13 @@ public class ActivityLearn extends AppCompatActivity {
             // on next position is an assessment
             if(this.currentAssessmentIndex + 1 == this.assessments.size()-1) {
                 // next position is last assessment
-                view.setEnabled(false);
+                this.findViewById(R.id.btnNextAssessment).setEnabled(false);
+                this.findViewById(R.id.btnNextAssessmentBottom).setEnabled(false);
             }
 
             this.currentAssessmentIndex += 1;
             this.findViewById(R.id.btnPrevAssessment).setEnabled(true);
+            this.findViewById(R.id.btnPrevAssessmentBottom).setEnabled(true);
             this.displayAssessment(this.currentAssessmentIndex);
             //this.assessments.get(this.currentAssessmentIndex).setHowSolved(UsersAssessmentResponse.Wrong);
             ((LinearLayout) this.findViewById(R.id.layoutAssessmentHandling)).removeAllViews();
@@ -144,13 +151,17 @@ public class ActivityLearn extends AppCompatActivity {
         // check prev index position
         if(this.currentAssessmentIndex + 1 >= 1) {
             Button prevButton = (Button) this.findViewById(R.id.btnPrevAssessment);
+            Button prevButtonBottom = (Button) this.findViewById(R.id.btnPrevAssessmentBottom);
             prevButton.setEnabled(true);
+            prevButtonBottom.setEnabled(true);
         }
 
         // check index == 0
         if(this.currentAssessmentIndex == 0) {
             Button prevButton = (Button) this.findViewById(R.id.btnPrevAssessment);
+            Button prevButtonBottom = (Button) this.findViewById(R.id.btnPrevAssessmentBottom);
             prevButton.setEnabled(false);
+            prevButtonBottom.setEnabled(false);
         }
     }
     // endregion
@@ -172,14 +183,26 @@ public class ActivityLearn extends AppCompatActivity {
         dotCurrentBackground.setShape(GradientDrawable.RECTANGLE);
         dotCurrentBackground.setStroke(1, Color.rgb(0, 0, 0));
         dotCurrentBackground.setColor(Color.rgb(89, 166, 238));
+
         LinearLayout linearLayoutAssessmentIndex = (LinearLayout) findViewById(R.id.linearLayoutAssessmentIndex);
+        LinearLayout linearLayoutAssessmentIndexBottom = (LinearLayout) findViewById(R.id.linearLayoutAssessmentIndexBottom);
         for(int i=0;i < linearLayoutAssessmentIndex.getChildCount();i++) {
             if(i == currentAssessmentIndex) {
                 TextView tv = (TextView) linearLayoutAssessmentIndex.getChildAt(i);
+                tv.setId(View.generateViewId());
                 tv.setBackground(dotCurrentBackground);
+
+                TextView tvBottom = (TextView) linearLayoutAssessmentIndexBottom.getChildAt(i);
+                tvBottom.setId(View.generateViewId());
+                tvBottom.setBackground(dotCurrentBackground);
             } else {
                 TextView tv = (TextView) linearLayoutAssessmentIndex.getChildAt(i);
+                tv.setId(View.generateViewId());
                 tv.setBackground(dotBackground);
+
+                TextView tvBottom = (TextView) linearLayoutAssessmentIndexBottom.getChildAt(i);
+                tvBottom.setId(View.generateViewId());
+                tvBottom.setBackground(dotBackground);
             }
         }
 
@@ -197,6 +220,7 @@ public class ActivityLearn extends AppCompatActivity {
     private void showAssessmentIndex() {
         // clear views
         ((LinearLayout) findViewById(R.id.linearLayoutAssessmentIndex)).removeAllViews();
+        ((LinearLayout) findViewById(R.id.linearLayoutAssessmentIndexBottom)).removeAllViews();
 
         if(this.assessments.size() >= 1) {
             // dot background
@@ -207,9 +231,11 @@ public class ActivityLearn extends AppCompatActivity {
 
             // dot layout params
             LinearLayout.LayoutParams dotParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            dotParams.width = 50;
-            dotParams.height = 50;
-            dotParams.setMargins(10, 20, 10, 10);
+            int dotSize = 30;
+            int dotMargin = 9;
+            dotParams.width = convertDpToPx(this, dotSize);
+            dotParams.height = convertDpToPx(this, dotSize);
+            dotParams.setMargins(convertDpToPx(this, (dotMargin/2)), convertDpToPx(this, dotMargin), convertDpToPx(this, (dotMargin/2)), convertDpToPx(this, dotMargin));
 
             // show dots
             for(int i=0;i < this.assessments.size();i++) {
@@ -217,6 +243,11 @@ public class ActivityLearn extends AppCompatActivity {
                 dotTextView.setBackground(dotBackground);
                 dotTextView.setLayoutParams(dotParams);
                 ((LinearLayout) findViewById(R.id.linearLayoutAssessmentIndex)).addView(dotTextView);
+
+                TextView dotTextViewBottom = new TextView(this);
+                dotTextViewBottom.setBackground(dotBackground);
+                dotTextViewBottom.setLayoutParams(dotParams);
+                ((LinearLayout) findViewById(R.id.linearLayoutAssessmentIndexBottom)).addView(dotTextViewBottom);
             }
         }
     }
@@ -247,6 +278,7 @@ public class ActivityLearn extends AppCompatActivity {
         // assessments existing?
         if(this.assessments.size() > 1) {
             findViewById(R.id.btnNextAssessment).setEnabled(true);
+            findViewById(R.id.btnNextAssessmentBottom).setEnabled(true);
         }
 
         // asssessment dots

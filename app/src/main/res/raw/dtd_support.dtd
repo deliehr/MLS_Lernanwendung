@@ -1,12 +1,12 @@
 <!DOCTYPE supportAssessments [
 <!ELEMENT supportAssessments (support+)>
 
-<!ELEMENT support (textBox?,prompt?,img?,table?,selection?)>
-<!ATTLIST support
+<!ELEMENT support (textBox?,prompt?,img?,vid?,table?,selection?)>
+    <!ATTLIST support
     id CDATA #REQUIRED
     assessmentId CDATA #REQUIRED
     creationTimestamp CDATA #REQUIRED
-    identifier (textbox|video|image|table|selection) #REQUIRED
+    identifier (textbox|image|video|table|selection) #REQUIRED
     >
 
 <!ELEMENT textBox (#PCDATA)>
@@ -14,7 +14,13 @@
 <!ELEMENT prompt (#PCDATA)>
 
 <!ELEMENT img EMPTY>
-<!ATTLIST img
+    <!ATTLIST img
+    src CDATA #REQUIRED
+    alt CDATA #IMPLIED
+    >
+
+<!ELEMENT vid EMPTY>
+<!ATTLIST vid
     src CDATA #REQUIRED
     alt CDATA #IMPLIED
     >

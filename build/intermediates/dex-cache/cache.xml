@@ -2,6 +2,24 @@
 <items version="2" >
 
     <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/ed3c80ea936f872b396ad83bc6db3c96e4750183/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_c7c5dfb940927d58e86a2268f637e3da2d55652e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/b427fd6ef1c2034379997c495f23331aabd82e6c/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6b43f6c996c3761bf9f32f2ce311bd1f4aa7d032">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_68719ad0beb9e84d45e441d68f8fea01a61df038/classes.dex" />
+    </item>
+    <item
         is-multidex="false"
         jar="/Users/Dominik/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.5/6c6c702c89bfff3cd9e80b04d668c5e190d588c6/commons-lang3-3.5.jar"
         jumboMode="false"
@@ -20,31 +38,22 @@
         <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/xerces-for-android_1bcd24694ca105f52d5f8351122cda0efac0a71b.jar" />
     </item>
     <item
-        is-multidex="false"
-        jar="/Users/Dominik/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/4a92c7e65a67994863a6668e35846e4f893e1840/output/jars/classes.jar"
+        jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
-        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/constraint-layout-solver-1.0.2_3facf474b8fb85c14c248a368c727ff39497c8de.jar" />
+        sha1="da27a32db6af8954ee8061537c7d476fcb1df46f">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_a051f5f4b6262e24bbb244a0bb7df5ad53e6fec2/classes.dex" />
     </item>
     <item
-        is-multidex="false"
-        jar="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/libs/xerces-for-android.jar"
-        jumboMode="false"
-        optimize="true"
-        revision="25.0.0"
-        sha1="95c5858707dcb34204f55128180417f5c7926768">
-        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/xerces-for-android_1bcd24694ca105f52d5f8351122cda0efac0a71b.jar" />
-    </item>
-    <item
-        is-multidex="false"
-        jar="/Users/Dominik/.android/build-cache/156bb4f25199b81168cabbc9f841f9d2bd08b767/output/jars/classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="/Users/Dominik/.gradle/caches/modules-2/files-2.1/com.github.PhilJay/MPAndroidChart/v3.0.2/5d4eb08a326bdbd7fbbddc769666898c9936b282/MPAndroidChart-v3.0.2.jar"
+        jumboMode="true"
         optimize="true"
         revision="25.0.2"
-        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
-        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/classes_be73792fd0ea3d8570f998c2420b22cfc376daf1.jar" />
+        sha1="5d4eb08a326bdbd7fbbddc769666898c9936b282">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/MPAndroidChart-v3.0.2_1708ef3df676eea4abd4c560a27c1a31f9b512bf/classes.dex" />
     </item>
     <item
         is-multidex="false"
@@ -56,13 +65,175 @@
         <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/MPAndroidChart-v3.0.2_1708ef3df676eea4abd4c560a27c1a31f9b512bf.jar" />
     </item>
     <item
-        is-multidex="false"
-        jar="/Users/Dominik/.android/build-cache/3ff50005dbae463146b98ede4043b6f0e3fd1ed4/output/jars/classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/c82cc5bdb7f959ac99cb5a12ff01eccd0e57ef31/output/jars/classes.jar"
+        jumboMode="true"
         optimize="true"
         revision="25.0.2"
         sha1="0b83a4b286fe2d068d47e9f9567758f6319b1040">
-        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/classes_b9cc618fa6279d57d426b7f727097b4dd7de6b47.jar" />
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_db0555ae70b619a70cc484cc94eeff6bad9e7821/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/a4922be0509104f68ebd57d675219c5d7af79216/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="44ee06abb66da30f5855e6bf54574e64cdcd982a">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_8cc3b7bbcf7593d640fe2055fdddbbe9fd1149e2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="13be1c853ef74e1f1cc6ff055c26476253d89d2b">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_c01e7aff4b45faea7e38b9bfa3b70b0942585292/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/bdbbf065ae87a59dcc40c6fac3aebee438e613b9/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6ef31f1555bb4cc513ec8d52711365a8b89f3600">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b859c9ea993d5f207920846c5c574fda7e455e8d/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/libs/xerces-for-android.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="95c5858707dcb34204f55128180417f5c7926768">
+        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/xerces-for-android_1bcd24694ca105f52d5f8351122cda0efac0a71b.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.gradle/caches/modules-2/files-2.1/com.google.zxing/core/3.3.0/73c49077166faa4c3c0059c5f583d1d7bd1475fe/core-3.3.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="73c49077166faa4c3c0059c5f583d1d7bd1475fe">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/core-3.3.0_cafbcf7f3e4ecfe477ce406745610a7c5ffd1e71/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/12375e924148c52b16fdb774da2bcca0a934d912/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="45f697922e6f072daa12f8a2995dc77ab03c11da">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_93439ea6de8f242868922cadfb659a8639ece96e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/d6fe921089c4750429a812152db25945f16ccb46/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4a26a1154d053ab11aaf4c3967c42a4d66390991">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_b06019d27ba5975e5e2c779597d8457c51f33b96/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/constraint-layout-solver-1.0.2_3facf474b8fb85c14c248a368c727ff39497c8de/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/Dominik/Library/Android/sdk/extras/m2repository/com/android/support/constraint/constraint-layout-solver/1.0.2/constraint-layout-solver-1.0.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.2"
+        sha1="b9cd8fc6bd15cb915735d34535db30ece0c44603">
+        <dex dex="/Users/Dominik/Documents/Studium/13. Semester/Bachelorarbeit/AndroidApp/MLS_App/app/build/intermediates/pre-dexed/debug/constraint-layout-solver-1.0.2_3facf474b8fb85c14c248a368c727ff39497c8de.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/89d1a11e3a3d47433988131ff01983d73bb8f4d2/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="150252b33b00274cc868578ade018fda0d43a3eb">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_f110d48f0c4c2437d10f92a90660f3e8ac6c5aae/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/6e07727bb952bbe122f65ff98fd53ac6411c51d5/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="4c1fb0a62675bdb3244ca33ef0c5b5b99c781056">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_2a18470568d411c63c882e52b991706dbab7fb51/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/25.3.1/support-annotations-25.3.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="bf8841d29fa39e077730e7a91222c2ce269fa7c9">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-25.3.1_b723b1e92dfe83ad02f4e8e9a19931bb900f9c54/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_a265a206935905cc427e1bcc4d3a8fad2370c1ef/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/a9766f45551dae264c017de4b51661197d1bca79/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="efb8cb62d47d157c29d1521daac7eefd4cb881ee">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_fcfa0848b717204837d78a4f7893dc426a67dd2b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-lang3/3.5/6c6c702c89bfff3cd9e80b04d668c5e190d588c6/commons-lang3-3.5.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="6c6c702c89bfff3cd9e80b04d668c5e190d588c6">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/commons-lang3-3.5_f09cd76e97b0e7ab3d1d9b81bafd2153d57cc6ca/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/1bbc21235b3ad1974c3ed232f9b5c9627a170c77/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="052f5f840f21174a3ecf6544130194e2652cbb73">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_39f778fa4416e0e8d5a6467aef7a48b7341fa138/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/.android/build-cache/483c370d73fdcbedc80c2eacf5c8a5510337a157/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="47635644d0d5c103c1dd8360549eb9ba3225c7d3">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_e317218ee4620842525bc67e0ff13f834679b9c4/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Dominik/Documents/Public_MLS_APP/app/libs/xerces-for-android.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="95c5858707dcb34204f55128180417f5c7926768">
+        <dex dex="/Users/Dominik/Documents/Public_MLS_APP/app/build/intermediates/transforms/dex/debug/folders/1000/2/xerces-for-android_c5dde2745e143f65aa5dff61046e6dbe36886f60/classes.dex" />
     </item>
 
 </items>
